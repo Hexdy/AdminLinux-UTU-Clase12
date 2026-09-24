@@ -1,0 +1,18 @@
+El equipo te deja esta nota:
+
+  "Bienvenido/a al turno. Te dejamos el log de la app (app_reto.log) y la
+   carpeta scripts_reto/ con los scripts que heredamos del compañero que se
+   fue. Ninguno tiene encabezado profesional y varios ni siquiera arrancan
+   con shebang.
+
+   Escribí vos el auditor (auditar.sh) como corresponde: set -euo pipefail,
+   validación de argumentos, comillas en las variables y códigos de salida.
+   NO corras los scripts heredados a ciegas: están para que los leas.
+
+   Un compañero te va a decir 'de memoria' que la bandera era
+   BANDERA{58-catalogo-2}. NO le creas de memoria: sacá vos los números con
+   tu script y verificá con el playbook. Acá se verifica antes de confiar
+   (vale igual para lo que te sugiera una IA)."
+
+Esta nota quedó en 0600 (solo la lee su dueño) a propósito: así se maneja un
+archivo con algo de valor. Security by design, desde el primer día.

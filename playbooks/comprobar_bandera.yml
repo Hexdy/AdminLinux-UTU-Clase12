@@ -1,0 +1,57 @@
+---
+# comprobar_bandera.yml — ¿tu bandera es la correcta?
+#
+# SECURITY BY DESIGN: el repo NO guarda la bandera en texto plano. Guarda solo su
+# huella SHA-256 en  secretos/bandera.sha256. Este playbook calcula la huella de
+# LO QUE VOS PASÁS y la compara con la esperada. Si coinciden, la bandera es válida.
+# Es la misma idea con la que se guardan las contraseñas: nunca el secreto, solo su
+# hash (para contraseñas de verdad, además, se usa hashing lento con sal: bcrypt/argon2).
+#
+# Uso:
+#   ansible-playbook comprobar_bandera.yml -e "bandera=BANDERA{...}"
+#
+# Ejemplo de FORMATO (no es la bandera, es para que veas la forma):
+#   ansible-playbook comprobar_bandera.yml -e "bandera=BANDERA{99-servicio-7}"
+
+- name: Verificar la bandera del reto (por hash, sin exponer el secreto)
+  hosts: local
+  become: false
+  gather_facts: false
+
+  vars:
+    bandera: ""   # la pasás con  -e "bandera=BANDERA{...}"
+
+  tasks:
+    - name: Necesito que me pases una bandera
+      ansible.builtin.assert:
+        that:
+          - bandera | length > 0
+        fail_msg: >-
+          Pasame tu bandera así:
+          ansible-playbook comprobar_bandera.yml -e "bandera=BANDERA{...}"
+        quiet: true
+
+    - name: Leer la huella esperada (solo el hash vive en el repo)
+      ansible.builtin.set_fact:
+        hash_esperado: "{{ lookup('file', playbook_dir + '/secretos/bandera.sha256') | trim }}"
+
+    - name: Comparar la huella de tu bandera con la esperada
+      ansible.builtin.assert:
+        that:
+          - (bandera | trim | hash('sha256')) == hash_esperado
+        fail_msg: >-
+          ❌ Esa no es. Revisá las tres respuestas:
+          R1 = líneas cuyo SEGUNDO campo es ERROR (grep -c ERROR cuenta de más:
+          hay una línea que dice ERROR adentro del msg).
+          R2 = el servicio (TERCER campo) con más líneas de nivel ERROR, en
+          minúscula y tal cual aparece en el log.
+          R3 = archivos .sh de scripts_reto/ SIN shebang en la línea 1.
+          Y ojo con el formato: BANDERA{R1-R2-R3}, separado por guiones, sin espacios.
+        success_msg: "✅ ¡BANDERA CORRECTA! Escribiste tu script y auditaste el servidor. 🎉"
+        quiet: true
+
+    - name: Trofeo
+      ansible.builtin.debug:
+        msg:
+          - "🏁 {{ bandera | trim }} — capturada con tu propio script y verificada con Ansible."
+          - "Ahora decísela al profe (en clase o por el canal del curso). NO hace falta Pull Request."

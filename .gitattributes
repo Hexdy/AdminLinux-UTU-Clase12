@@ -1,0 +1,10 @@
+# Finales de línea: los scripts y playbooks deben ser LF (Unix) aunque se editen
+# desde Windows/Drive. Así corren bien en la VM Linux del alumno.
+* text=auto eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.cfg text eol=lf
+*.ini text eol=lf
+*.md text eol=lf
+*.log text eol=lf
