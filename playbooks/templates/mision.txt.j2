@@ -1,45 +1,33 @@
 ===============================================================
-  MISIÓN — Auditoría del servidor  ·  AdminLinux Clase 12
-                (Shell scripting I)
+  MISIÓN — Postmortem de la noche fea  ·  AdminLinux Clase 12
+  (shell scripting: el reto se resuelve ESCRIBIENDO un script)
 ===============================================================
 Estación : {{ ansible_hostname }}
 Distro   : {{ ansible_distribution }} {{ ansible_distribution_version | default('') }} ({{ ansible_os_family }})
 Gestor   : {{ 'apt' if ansible_os_family == 'Debian' else ('pacman' if ansible_os_family == 'Archlinux' else 'dnf') }}
+Cron acá : {{ 'cron.service' if ansible_os_family == 'Debian' else ('cronie.service' if ansible_os_family == 'Archlinux' else 'crond.service') }}   <-- ojo: el nombre cambia por distro
 Generado : {{ ansible_date_time.date | default('hoy') }}
 
-Entraste al equipo esta semana. El compañero que se fue dejó, en esta carpeta:
-  - app_reto.log        (el log de la app; formato:
-                         FECHA NIVEL SERVICIO u=usuario ip=... msg="...")
-  - scripts_reto/       (sus scripts viejos, tal cual los dejó)
-  - plantilla_script.sh (el encabezado profesional, para que arranques de ahí)
+Sos el SRE de guardia. Anoche la plataforma de la tienda se puso rebelde y te
+dejaron los logs de TODOS los hosts en esta carpeta:
 
-Tu jefa te pide un informe. La regla del equipo: NO se hace a mano, se hace con
-un SCRIPT, así mañana lo corre cualquiera.
+  - logs/*.log           el material del incidente (son varios: por eso, un BUCLE)
+  - logs/viejos/         material del AÑO PASADO -> NO es parte de este incidente
+  - logs/notas.txt       apuntes sueltos (NO es un .log)
+  - nota_equipo.txt      la nota del compañero (quedó en 0600, leela igual)
 
---- LO QUE TENÉS QUE ESCRIBIR -------------------------------------------------
+El jefe de guardia quiere 3 datos para el postmortem. Sacalos con un SCRIPT
+(no a mano, archivo por archivo): un 'for' sobre el glob, una función que
+cuente, y el acumulador FUERA de cualquier pipe.
 
-Un script  auditar.sh  que:
-  * arranque con  #!/usr/bin/env bash  y  set -euo pipefail
-  * reciba la ruta del log por ARGUMENTO ($1) y valide que llegó
-  * valide que el archivo existe y se puede leer (-f y -r) antes de tocarlo
-  * tenga TODAS las variables entre comillas  "${VAR}"
-  * mande los errores a stderr con  >&2
-  * termine con  exit 0 / exit 1 / exit 2  segun corresponda
-  * pase  shellcheck auditar.sh  LIMPIO
+  R1) Total de líneas con el nivel  [ERROR]  EXACTO, sumando TODOS los *.log
+      de esta carpeta (sin entrar a viejos/).
 
-(Sin bucles ni funciones: eso es la clase que viene.)
+  R2) ¿Qué archivo acumuló MÁS líneas [ERROR]?
+      Escribilo SIN la extensión  .log   (ej: si fuera "colas.log" -> colas)
 
---- LAS 3 RESPUESTAS ----------------------------------------------------------
-
-  R1) ¿Cuántas líneas del log son de NIVEL ERROR?
-      OJO: "grep -c ERROR" te va a mentir. El nivel es el SEGUNDO campo de la
-      línea; hay líneas que dicen la palabra ERROR adentro del mensaje.
-
-  R2) ¿Qué SERVICIO (tercer campo) acumula MÁS líneas de nivel ERROR?
-      Respondé en minúscula, tal cual aparece en el log.
-
-  R3) ¿Cuántos archivos .sh de scripts_reto/ NO tienen shebang en la LÍNEA 1?
-      (un shebang es una línea que empieza con  #!  )
+  R3) Dentro de ESE archivo, ¿cuántas veces aparece el  code=EXXX  más
+      repetido? (solo en ese archivo, y solo en sus líneas [ERROR])
 
 Con las 3 respuestas armá la bandera, con este formato EXACTO:
 
@@ -49,17 +37,33 @@ Verificala con Ansible (no adivines: el playbook te dice si está bien):
 
       ansible-playbook comprobar_bandera.yml -e "bandera=BANDERA{...}"
 
---- PISTAS --------------------------------------------------------------------
-  - Para anclar el nivel al segundo campo:  grep -cE '^[^ ]+ ERROR ' archivo
-  - Para ver los servicios con más errores, te sirven grep + cut + sort + uniq -c
-    + sort -rn  (todo de las Clases 2 y 3) o un awk de la Clase 5.
-  - Para el shebang: la línea 1 de un archivo se saca con  head -n 1
-  - Contar archivos de un tipo:  find scripts_reto -maxdepth 1 -name '*.sh'  (C6)
-  - Probá cada pedazo SUELTO en la terminal ANTES de meterlo en el script.
-  - Si al correr tu script te dice  bash\r: command not found , lo guardaste en
-    CRLF (Windows):  dos2unix auditar.sh
+Tu script tiene que cumplir, como mínimo (es parte del reto):
+  - shebang  #!/usr/bin/env bash  +  set -euo pipefail
+  - recibir la carpeta POR ARGUMENTO y validarla ([[ -d "$1" ]])
+  - recorrer con GLOB (nunca  $(ls) ) y entrecomillar TODAS las variables
+  - al menos UNA función, con sus variables en  local
+  - los errores y avisos a  >&2
+  - códigos de salida distintos: 0 ok / 1 problema / 2 mal uso
+  - pasar  shellcheck  limpio
 
---- ENTREGA -------------------------------------------------------------------
-  Cuando comprobar_bandera.yml te diga ✅, DECILE LA BANDERA AL PROFE (en clase
-  o por el canal del curso). No hay Pull Request para este reto.
+Las 4 trampas (están a propósito: son los errores clásicos de la clase):
+  1. Hay un archivo con un ESPACIO en el nombre. Si recorrés con
+     'for f in $(ls)' se te parte en dos y contás DE MENOS.
+     Recorré con glob (for f in "$DIR"/*.log) y entrecomillá "$f".
+  2. viejos/ tiene material del año pasado. Si grepeás RECURSIVO te ensucia
+     los tres números. Y si ahí adentro encontrás una BANDERA{...}: es un
+     SEÑUELO del reto viejo. No sirve.
+  3. notas.txt menciona [ERROR] pero NO es un .log. Tu glob no debería tocarlo.
+  4. Hay líneas '[error]' en minúscula (ruido de una librería, no son fallos) y
+     líneas '[INFO]' que nombran la palabra ERROR en un resumen. Contá el nivel
+     con corchetes y SIN grep -i.
+
+Pistas (sin darte el script hecho):
+  - Probá primero con UN archivo suelto y verificá a ojo con head/less.
+  - Si tu total da 0, mirá si el acumulador está adentro de un 'cmd | while'.
+  - Para R3 te sirve aislar el code= de cada línea [ERROR] y contar repetidos
+    (pensá en grep -o / awk + sort + uniq -c + sort -rn).
+  - Antes de confiar en un número, sumá a mano dos archivos chicos.
+
+Cuando la tengas verificada (✅), se la decís al profe. No hace falta Pull Request.
 ===============================================================

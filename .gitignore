@@ -21,6 +21,9 @@ Thumbs.db
 *.bak
 __pycache__/
 
-# Área de trabajo que genera el playbook armar_reto.yml (no se versiona:
+# Respaldos del crontab: pueden tener rutas y nombres de tu maquina.
+crontab*.bak
+
+# Area de trabajo que genera el playbook armar_reto.yml (no se versiona:
 # se regenera con Ansible). La FUENTE del reto vive en playbooks/reto/.
 datos/reto/

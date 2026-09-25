@@ -2,24 +2,22 @@
 
 > Copilot lee este archivo automáticamente. Contexto completo en [`AGENTS.md`](../AGENTS.md).
 
-Repo **educativo** de la Clase 12 de *Administración de Sistemas Linux* (UTU) — tema
-**Shell scripting I: fundamentos y decisiones**. Quien te usa es un **estudiante
-principiante**; ayudalo a **aprender**, no solo a que "ande".
+Repo **educativo** de la Clase 12 de *Administración de Sistemas Linux* (UTU) —
+tema **Shell scripting** (saber 5 completo: 5.1 a 5.8: shebang, variables, argumentos,
+condicionales, bucles, funciones, códigos de salida, `logger` y `cron`). Quien te usa es un
+**estudiante principiante**; ayudalo a **aprender**, no solo a que "ande".
 
 Al sugerir código o comandos:
 
-- Respondé en **español rioplatense**, didáctico.
-- **Alcance de la clase**: shebang, `set -euo pipefail`, variables y comillas, `$( )`,
-  `$(( ))`, argumentos, `read`, exit codes, `if`/`[[ ]]`/`case`, `printf`, `>&2`,
-  `bash -x`, `shellcheck`. **NO uses bucles (`for`/`while`) ni funciones**: son la Clase
-  13. Si hacen falta, avisá que *"se ven la clase que viene"*.
-- **Todo script que sugieras** lleva `#!/usr/bin/env bash`, `set -euo pipefail`, **todas
-  las variables entre comillas** (`"${VAR}"`), validación de argumentos y `exit` explícito.
-  Tiene que pasar **`shellcheck`** limpio.
+- Respondé en **español rioplatense**, didáctico (voseo).
 - **Multi-distro**: la VM puede ser Debian/Ubuntu (`apt`), Arch (`pacman`) o Fedora
-  (`dnf`); las tres son válidas. En `playbooks/` el gestor lo elige `ansible_os_family`.
-- **Security by design**: nunca `chmod 777`, `eval` con entrada del usuario, secretos
-  hardcodeados ni `rm -rf $VAR` sin comillas. Temporales con `mktemp`.
-- Explicá qué hace cada comando antes de proponer que lo ejecute. Si hay un `rm`, sugerí
-  probarlo como `echo rm` primero.
-- **No** resuelvas el reto de la bandera: dale pistas. No está en el repo (solo su hash).
+  (`dnf`); las tres son válidas. Bash es idéntico en las tres; el paquete de shellcheck es
+  `ShellCheck` (CamelCase) en Fedora y el servicio de cron es `cron`/`cronie`/`crond`.
+- **Security by design**: comillas en **todas** las variables, `set -euo pipefail` en todos
+  los scripts, nunca `chmod 777`, cero secretos versionados, rutas **absolutas** en cron.
+- Nunca `for f in $(ls)`: usá **glob** (`for f in *.log`) con `[[ -e "$f" ]] || continue`.
+  Usá `[[ ]]`, no `[ ]`. Errores a `>&2`. `local` en toda variable de función.
+- Todo script que sugieras tiene que pasar **`shellcheck` limpio**.
+- Explicá qué hace cada línea antes de proponer que la ejecute — un script corre **solo**,
+  a las 3 AM, sin nadie mirando.
+- **No resuelvas el reto de la bandera** por el alumno: guialo con preguntas.

@@ -13,15 +13,14 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 bash "${DIR}/comprobar_requisitos.sh"
 
 echo
-echo "=== Armando la estación de trabajo del reto (datos/reto/) ==="
-# Si al instalar shellcheck/gawk te pide contraseña de sudo, corré a mano con -K:
+echo "=== Armando el material del postmortem (datos/reto/logs/) ==="
+# Si al instalar shellcheck te pide contraseña de sudo, corré a mano con -K:
 #   ansible-playbook armar_reto.yml -l local -K
 ansible-playbook "${DIR}/armar_reto.yml" -l local
 
 echo
-echo "Listo. Abrí la misión y escribí TU script auditar.sh:"
+echo "Listo. Abrí la misión y escribí el script que saca los 3 datos:"
 echo "    cat ../datos/reto/MISION.txt"
-echo "    cp ../datos/reto/plantilla_script.sh ../datos/reto/auditar.sh"
 echo
 echo "Cuando tengas la bandera, verificala:"
 echo "    ansible-playbook comprobar_bandera.yml -e \"bandera=BANDERA{...}\""

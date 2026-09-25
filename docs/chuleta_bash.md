@@ -1,218 +1,169 @@
-# Chuleta de Bash — Clase 12 (fundamentos y decisiones)
+# Chuleta — Bash: lo básico que se usa en TODO script
 
-> Todo lo de la clase, en tablas. ⚠️ Bucles y funciones **no están acá**: son la Clase 13.
+> Escalones 1 y 2 de la Clase 12: **guardar** y **decidir**.
+> Para bucles y funciones mirá `chuleta_bucles_funciones.md`; para agendar, `chuleta_cron.md`.
 
-## 1. Anatomía
-
-| Pieza | Para qué |
-|---|---|
-| `#!/usr/bin/env bash` | **shebang**: quién interpreta el archivo. Línea 1, sin espacios antes. |
-| `set -euo pipefail` | encabezado profesional (§2) |
-| `# comentario` | explica el **por qué**, no el qué |
-| `exit 0` / `exit 1` | el veredicto para quien lo llamó |
-| `chmod +x script.sh` | permiso de ejecución (sin esto, `./script.sh` = *Permission denied*) |
-
-| Forma de correrlo | Dónde corre | Sus variables | Cuándo |
-|---|---|---|---|
-| `./script.sh` | proceso hijo | se pierden | la normal (pide shebang + `x`) |
-| `bash script.sh` | proceso hijo | se pierden | probar sin dar permisos |
-| `source script.sh` · `. script.sh` | **tu shell actual** | **quedan** | cargar config, `.env` |
-
-## 2. `set -euo pipefail`
-
-| Opción | Nombre largo | Qué hace |
-|---|---|---|
-| `-e` | `errexit` | si un comando falla, el script **para** |
-| `-u` | `nounset` | usar una variable **no definida** es error |
-| `-o pipefail` | — | en `a \| b \| c` falla si falla **cualquiera** |
-
-⚠️ `-e` **no** salta si el comando está dentro de un `if`, antes de `||`/`&&`, o negado
-con `!`. Igual validá a mano.
-
-## 3. Variables
-
-| Escribís | Pasa |
-|---|---|
-| `NOMBRE="log"` | ✅ asignación (sin espacios alrededor del `=`) |
-| `NOMBRE = "log"` | ❌ `NOMBRE: command not found` |
-| `"${VAR}"` | ✅ el valor, como **una sola pieza** |
-| `$VAR` | ⚠️ se parte por los espacios (*word splitting*) |
-| `"${VAR:-defecto}"` | si `VAR` está vacía o no existe, usa `defecto` |
-| `"${VAR:?mensaje}"` | si está vacía, **corta** el script con ese mensaje |
-| `readonly TOPE=10` | constante: no se puede cambiar después |
-| `export VAR=x` | pasa a ser variable de **entorno** (la heredan los hijos) |
-
-`local` existe pero se usa **dentro de funciones** → Clase 13.
-
-## 4. Sustitución y aritmética
-
-| Escribís | Da |
-|---|---|
-| `$(comando)` | la **salida** del comando (✅ el que se usa) |
-| `` `comando` `` | lo mismo, pero **obsoleto** (SC2006) |
-| `$(( 3 + 4 ))` | `7` — cuentas **enteras** |
-| `$(( a * b ))` | adentro de `$(( ))` no hace falta el `$` |
-| `awk 'BEGIN { printf "%.2f\n", 10/3 }'` | decimales (Bash no sabe) |
-
-## 5. Argumentos
-
-| Cosa | Qué es |
-|---|---|
-| `$0` | el nombre del script |
-| `$1` … `$9` | los argumentos, en orden |
-| `$#` | **cuántos** llegaron |
-| `"$@"` | todos, **uno por uno** (✅ el que se usa) |
-| `"$*"` | todos **pegados** en una sola pieza |
-| `shift` | corre los argumentos: `$2` pasa a ser `$1`… |
+## 1. El encabezado (siempre igual)
 
 ```bash
-if [[ $# -lt 1 ]]; then
-  echo "Uso: $0 <ruta-log> [umbral]" >&2
-  exit 2
-fi
-LOG="$1"
-UMBRAL="${2:-10}"
+#!/usr/bin/env bash
+# nombre.sh - que hace, quien lo hizo, como se usa.
+# Salida: 0 = ok | 1 = problema | 2 = error de uso
+set -euo pipefail
 ```
 
-## 6. `read`
-
-| Opción | Qué hace |
+| Parte | Por qué |
 |---|---|
-| `-p "texto"` | muestra la pregunta en la **misma** línea |
-| `-r` | respeta las `\` (usalo **siempre**) |
-| `-s` | **no muestra** lo que se escribe (claves) |
-| `-t 10` | espera 10 segundos y sigue |
+| `#!/usr/bin/env bash` | shebang: con qué intérprete se abre. Más portable que `#!/bin/bash`. |
+| `set -e` | si un comando falla, **frena** ahí (no sigue haciendo desastre). |
+| `set -u` | usar una variable que no existe es un **error**, no una cadena vacía. |
+| `set -o pipefail` | si falla **cualquier** comando de la tubería, la tubería falla. |
 
-⚠️ Un script interactivo **no se puede automatizar**. Preferí argumentos.
-
-## 7. Códigos de salida
-
-| Código | Convención |
-|---|---|
-| `0` | todo bien |
-| `1` | falló / se cumplió la condición de alerta |
-| `2` | mal usado (faltan argumentos, archivo ilegible) |
-| `126` | encontrado pero **no ejecutable** (te faltó `chmod +x`) |
-| `127` | **comando no encontrado** (typo o no está instalado) |
-| `130` | lo cortaste con `Ctrl+C` |
-
-`$?` = código del **último** comando. Sin `exit`, el script devuelve el del último.
-
-## 8. Condicionales
-
-```bash
-if [[ condicion ]]; then
-  ...
-elif [[ otra ]]; then
-  ...
-else
-  ...
-fi
-```
-
-| | `[[ ]]` | `[ ]` |
-|---|---|---|
-| Qué es | palabra reservada de Bash | un **comando** |
-| Variable vacía sin comillas | no se rompe | **explota** |
-| `&&` / `\|\|` adentro | sí | no |
-| Regex `=~` | sí | no |
-| Portable a POSIX `sh` | no | sí |
-
-**✅ En Bash usá `[[ ]]`.** `[ ]` solo si escribís `sh` puro.
-
-### 🔴 Cadenas vs Números
-
-| TEXTO | NÚMEROS |
-|---|---|
-| `==` igual | `-eq` igual |
-| `!=` distinto | `-ne` distinto |
-| `<` `>` orden alfabético | `-lt` menor · `-le` menor o igual |
-| `-z` está vacío | `-gt` mayor · `-ge` mayor o igual |
-| `-n` NO está vacío | |
-
-`[[ "9" > "10" ]]` → **verdadero** (texto). `[[ 9 -gt 10 ]]` → **falso** (número).
-
-### Pruebas de archivo
-
-| Prueba | Verdadero si… |
-|---|---|
-| `-e ruta` | existe (lo que sea) |
-| `-f ruta` | existe y es un **archivo común** |
-| `-d ruta` | existe y es un **directorio** |
-| `-r` / `-w` / `-x` | puedo **leer** / **escribir** / **ejecutar** |
-| `-s ruta` | existe y **no está vacío** |
-
-### Operadores
-
-| Operador | Significa |
-|---|---|
-| `&&` | Y — tienen que cumplirse las dos |
-| `\|\|` | O — alcanza con una |
-| `!` | negación |
-| `cmd1 && cmd2` | corré `cmd2` **solo si** `cmd1` salió bien |
-| `cmd1 \|\| cmd2` | corré `cmd2` **solo si** `cmd1` falló |
-
-### `case`
-
-```bash
-case "$1" in
-  start)        systemctl start nginx ;;
-  stop|parar)   systemctl stop  nginx ;;
-  *.log)        echo "es un log" ;;
-  *)            echo "Uso: $0 {start|stop}" >&2 ; exit 2 ;;
-esac
-```
-
-## 9. Mensajes
-
-| Escribís | Qué hace |
-|---|---|
-| `echo "hola"` | simple; varía entre shells |
-| `printf "%s\n" "hola"` | formato de verdad, igual en todos lados |
-| `printf "%-12s %5d\n" "$s" "$n"` | `%-12s` texto a la izquierda en 12 lugares, `%5d` número en 5 |
-| `echo "ERROR" >&2` | manda el mensaje a **stderr** |
-| `comando 2>/dev/null` | tira los errores a la basura |
-
-**Resultados → `stdout`. Errores y avisos → `stderr` (`>&2`).**
-
-## 10. Depurar
-
-| Herramienta | Para qué |
-|---|---|
-| `bash -x script.sh` | imprime cada línea **antes** de ejecutarla |
-| `set -x` / `set +x` | enciende / apaga el modo traza **en un tramo** |
-| `shellcheck script.sh` | el corrector: encuentra los errores antes de que exploten |
-| `bash -n script.sh` | revisa la **sintaxis** sin ejecutar nada |
-
-Instalar `shellcheck`: `apt install shellcheck` · `pacman -S shellcheck` ·
-`dnf install ShellCheck`.
-
-## 11. 🔴 Errores típicos (síntoma → causa → arreglo)
+Y después: `chmod +x nombre.sh` → `./nombre.sh`.
 
 | Síntoma | Causa | Arreglo |
 |---|---|---|
-| `NOMBRE: command not found` | espacios alrededor del `=` | `NOMBRE="valor"` |
-| `unary operator expected` | variable vacía sin comillas en `[ ]` | comillas + `[[ ]]` |
-| `too many arguments` | variable con espacios sin comillas | `"${VAR}"` |
-| borró el archivo equivocado | faltaron comillas (*word splitting*) | `rm "${ARCHIVO}"` |
-| `[[ 9 > 10 ]]` da verdadero | comparaste números como texto | `-gt`, `-lt`, `-eq` |
-| `unbound variable` | `set -u` y la variable no existe | `"${VAR:-defecto}"` |
-| `Permission denied` al hacer `./x.sh` | falta el permiso `x` | `chmod +x x.sh` |
-| `bash\r: command not found` | el archivo está en **CRLF** | `dos2unix x.sh` |
-| `syntax error near unexpected token 'fi'` | te falta el `;` antes de `then` | `if [[ x ]]; then` |
-| el pipe "salió bien" pero el dato está mal | faltó `-o pipefail` | `set -euo pipefail` |
-| `cron` dice que todo anduvo y no | el script nunca hizo `exit 1` | poné exit codes |
+| `Permission denied` (código 126) | falta el `+x` | `chmod +x nombre.sh` |
+| `command not found` (código 127) | falta el `./` o hay un typo | `./nombre.sh` |
+| `/usr/bin/env: 'bash\r': No such file` | el archivo está en **CRLF** | `dos2unix nombre.sh` |
 
-## 12. 🔒 Security by design
+## 2. Variables
 
-| # | Regla | ❌ Antipatrón | ✅ Correcto |
-|---|---|---|---|
-| 1 | Comillas siempre | `rm -rf $DIR/*` | `rm -rf "${DIR:?}"/*` |
-| 2 | Validar lo que entra | `LOG="$1"` y listo | `[[ -f "$LOG" && -r "$LOG" ]] \|\| exit 2` |
-| 3 | Nada de `eval` | `eval "$ENTRADA"` | validar con `case` / `[[ =~ ]]` |
-| 4 | Cero secretos en el código | `TOKEN="abc123"` | archivo aparte con `chmod 600` + `.gitignore` |
-| 5 | Temporales seguros | `/tmp/bk.tgz` (nombre fijo) | `tmp="$(mktemp)"` |
-| 6 | Rutas entre comillas | `cd $DESTINO` | `cd "${DESTINO}"` |
-| 7 | Mínimo privilegio | `chmod 777` | `chmod 600` / `640` según haga falta |
+```bash
+NOMBRE="servidor-01"          # sin espacios alrededor del =
+echo "$NOMBRE"                # se LEE con $ y SIEMPRE entre comillas
+echo "${NOMBRE}_respaldo"     # llaves cuando pega con otro texto
+readonly NOMBRE               # ya no se puede cambiar
+```
 
-> Un secreto commiteado **no se borra** con otro commit: queda en el historial. Se **rota**.
+| Necesito | Se escribe |
+|---|---|
+| Valor por defecto | `"${2:-20}"` → usá `$2`; si no vino, `20` |
+| Abortar si falta | `"${1:?falta la ruta}"` |
+| Longitud | `"${#NOMBRE}"` |
+| Sacar la extensión | `"${archivo%.log}"` |
+| Quedarme con el nombre | `"$(basename "$f" .log)"` |
+| Salida de un comando | `HOY="$(date +%F)"` |
+| Cuenta entera | `TOTAL=$(( A + B ))` |
+
+**Comillas** — la regla que más bugs evita:
+
+| | Qué hace |
+|---|---|
+| `"$VAR"` | expande `$` y **respeta los espacios**. ✅ Esta es la que usás. |
+| `'$VAR'` | literal, no expande nada. Útil para patrones: `grep '\[ERROR\]'`. |
+| `$VAR` | expande y **parte por espacios**. ❌ Casi siempre es un bug. |
+
+`export MIVAR` la manda al **entorno** (la heredan los procesos hijos). Sin `export`,
+tu script no la ve. Se listan con `env`.
+
+## 3. Argumentos y `read`
+
+```bash
+[[ $# -ge 1 ]] || { echo "Uso: $0 <ruta> [umbral]" >&2; exit 2; }
+LOG="$1"
+UMBRAL="${2:-20}"
+```
+
+| Variable | Qué es |
+|---|---|
+| `$0` | el nombre del script |
+| `$1` … `$9` | los argumentos (del 10 en adelante: `${10}`, con llaves) |
+| `$#` | cuántos argumentos llegaron |
+| `"$@"` | **todos**, cada uno como un elemento. ✅ Siempre con comillas. |
+| `"$*"` | todos pegados en un solo string |
+| `shift` | corre la lista: `$2` pasa a `$1`… y `$#` baja 1 |
+
+```bash
+read -r -p "Nombre del servidor: " SERVIDOR    # -p mensaje, -r no interpreta \
+read -r -s -p "Contrasena: " CLAVE ; echo      # -s oculta lo tipeado
+```
+
+> ⚠️ Un script con `read` **no se puede automatizar**: a las 3 AM no hay nadie para
+> contestar. Si lo va a correr cron, usá **argumentos**.
+
+## 4. Códigos de salida y los dos caños
+
+| Código | Significa |
+|---|---|
+| `0` | éxito |
+| `1` | error genérico / "encontré la condición" |
+| `2` | error de **uso** (faltan argumentos, argumento inválido) |
+| `126` · `127` | no ejecutable (falta `+x`) · comando no encontrado |
+| `130` | terminado con Ctrl+C |
+
+```bash
+echo "un resultado"                  # canal 1: stdout  -> el reporte
+echo "ERROR: falta el archivo" >&2   # canal 2: stderr  -> la pantalla
+comando >/dev/null 2>&1              # callar los dos canales
+echo "$?"                            # codigo de salida del ultimo comando
+```
+
+> 🔴 Nunca termines con `exit 0` fijo "para que no moleste": cron te avisa **solo** si
+> salís ≠ 0.
+
+## 5. Condicionales
+
+```bash
+if [[ "$errores" -gt 10 ]]; then
+    echo "ALERTA" >&2 ; exit 1
+elif [[ "$errores" -gt 0 ]]; then
+    echo "revisar"
+else
+    echo "todo ok"
+fi
+```
+
+| Comparar | Números | Texto |
+|---|---|---|
+| igual / distinto | `-eq` · `-ne` | `==` · `!=` |
+| menor / mayor | `-lt` `-le` · `-gt` `-ge` | `<` `>` (orden alfabético) |
+| vacío / no vacío | — | `-z "$v"` · `-n "$v"` |
+
+> 🔴 `[[ "$a" -gt "$b" ]]` compara **números**; `[[ "$a" > "$b" ]]` compara **texto**
+> (y ahí `"9" > "10"` es verdadero).
+
+**Pruebas de archivo** (el pan de cada día):
+
+| Prueba | Verdadero si… |
+|---|---|
+| `-e` · `-f` · `-d` | existe (lo que sea) · es archivo regular · es directorio |
+| `-r` · `-w` · `-x` | lo puedo leer · escribir · ejecutar |
+| `-s` | existe y **no** está vacío |
+| `-L` | es un enlace simbólico |
+
+```bash
+[[ -f "$LOG" && -r "$LOG" ]] || { echo "ERROR: no leo $LOG" >&2; exit 2; }
+```
+
+**Combinar**: `&&` (y), `||` (o), `!` (no). Y el atajo que vas a ver en todos lados:
+
+```bash
+comando || { echo "fallo" >&2; exit 1; }    # "si falla, hacé esto"
+```
+
+**`case`** — cuando comparás la misma variable muchas veces:
+
+```bash
+case "$1" in
+    start)    arrancar ;;
+    stop)     parar ;;
+    *.log)    procesar "$1" ;;      # tambien acepta patrones
+    *)        echo "uso: $0 {start|stop}" >&2; exit 2 ;;
+esac
+```
+
+## 6. Usá `[[ ]]`, no `[ ]`
+
+`[ ]` (o `test`) es un programa POSIX viejo: se rompe con una variable vacía sin comillas
+y no acepta `&&` / `||` adentro. `[[ ]]` es una construcción de Bash: aguanta, combina y
+entiende patrones (`[[ "$f" == *.log ]]`) y regex (`[[ "$ip" =~ ^10\. ]]`).
+**Sabé leer `[ ]`** en scripts viejos, pero no lo escribas.
+
+## 7. Antes de dar por terminado un script
+
+```bash
+bash -n script.sh        # ¿la sintaxis cierra? (no lo ejecuta)
+shellcheck script.sh     # el corrector ortografico de Bash
+bash -x script.sh        # muestra cada linea ANTES de ejecutarla
+```

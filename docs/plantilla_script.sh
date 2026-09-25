@@ -1,61 +1,56 @@
 #!/usr/bin/env bash
+# plantilla_script.sh - copiá este archivo como punto de partida de cualquier script.
 #
-# plantilla_script.sh — el encabezado profesional, listo para copiar.
-#
-# Uso:
-#   cp docs/plantilla_script.sh mi_script.sh
-#   chmod +x mi_script.sh
-#   ./mi_script.sh <argumento>
-#
-# Autor: <tu nombre>            Curso: AdminLinux UTU 2026 - Clase 12
-# ---------------------------------------------------------------------------
+# Uso:    ./plantilla_script.sh <directorio> [umbral]
+# Salida: 0 = todo ok | 1 = hubo problemas | 2 = error de uso
+# Autor:  <tu nombre>          Fecha: <AAAA-MM-DD>
 
-# -e          corta el script si un comando falla
-# -u          usar una variable no definida es error (mata el rm -rf "$VACIA")
-# -o pipefail en a | b | c, falla si falla CUALQUIERA de los tres
 set -euo pipefail
 
-# --- 1. Uso y validacion de argumentos -------------------------------------
+# --- Configuración (arriba, con nombre, nunca "perdida" en el medio) --------
+TAG="$(basename "$0" .sh)"
+UMBRAL_POR_DEFECTO=20
 
-if [[ $# -lt 1 ]]; then
-    echo "Uso: $0 <ruta-archivo> [umbral]" >&2
+# --- Funciones auxiliares ---------------------------------------------------
+
+# log <nivel> <mensaje>    nivel: info | warning | err
+log() {
+    local nivel="$1"; shift
+    printf '[%s] [%s] %s\n' "$(date '+%F %T')" "${nivel^^}" "$*" >&2
+    command -v logger >/dev/null 2>&1 && logger -t "$TAG" -p "user.${nivel}" "$*"
+}
+
+uso() {
+    echo "uso: $0 <directorio> [umbral]" >&2
     exit 2
-fi
+}
 
-ARCHIVO="$1"              # siempre entre comillas
-UMBRAL="${2:-10}"         # valor por defecto si no vino el segundo argumento
+validar_directorio() {
+    local dir="$1"
+    [[ -n "$dir" && -d "$dir" && -r "$dir" ]] || return 1
+}
 
-# --- 2. Validar lo que entra ANTES de usarlo -------------------------------
+# --- El trabajo de verdad ---------------------------------------------------
 
-if [[ ! -f "$ARCHIVO" ]]; then
-    echo "ERROR: ${ARCHIVO} no existe o no es un archivo comun." >&2
-    exit 2
-fi
+main() {
+    (( $# >= 1 && $# <= 2 )) || uso
 
-if [[ ! -r "$ARCHIVO" ]]; then
-    echo "ERROR: no tengo permiso de lectura sobre ${ARCHIVO}." >&2
-    exit 2
-fi
+    local dir="$1"
+    local umbral="${2:-$UMBRAL_POR_DEFECTO}"
+    [[ "$umbral" =~ ^[0-9]+$ ]] || { log err "el umbral no es un numero: $umbral"; exit 2; }
 
-# --- 3. Cuerpo: lo que ya sabes hacer a mano -------------------------------
+    validar_directorio "$dir" || { log err "no puedo leer el directorio: $dir"; exit 2; }
+    log info "arranco sobre $dir (umbral $umbral)"
 
-lineas=$(wc -l < "$ARCHIVO")
+    local f procesados=0
+    for f in "$dir"/*.log; do
+        [[ -e "$f" ]] || continue          # glob vacio -> patron literal
+        # ... acá va lo tuyo, siempre con "$f" entre comillas ...
+        procesados=$(( procesados + 1 ))
+    done
 
-printf '%-12s %s\n' "ARCHIVO:" "$ARCHIVO"
-printf '%-12s %s\n' "LINEAS:"  "$lineas"
+    log info "listo: $procesados archivos procesados"
+    (( procesados > 0 )) || return 1
+}
 
-# --- 4. Veredicto ----------------------------------------------------------
-
-if [[ "$lineas" -gt "$UMBRAL" ]]; then
-    echo "AVISO: ${lineas} lineas superan el umbral de ${UMBRAL}." >&2
-    exit 1
-fi
-
-exit 0
-
-# ---------------------------------------------------------------------------
-# Antes de decir "listo":
-#   shellcheck mi_script.sh     -> tiene que salir limpio
-#   bash -n mi_script.sh        -> sintaxis OK
-#   file mi_script.sh           -> NO debe decir "with CRLF line terminators"
-# ---------------------------------------------------------------------------
+main "$@"

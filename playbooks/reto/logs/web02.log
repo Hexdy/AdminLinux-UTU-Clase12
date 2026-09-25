@@ -1,0 +1,180 @@
+2026-09-24T01:10:56-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T01:12:03-03:00 web02 tienda-api[3216]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T01:13:09-03:00 web02 tienda-api[3216]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.42
+2026-09-24T01:13:39-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T01:13:44-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T01:13:55-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T01:14:21-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T01:14:55-03:00 web02 tienda-api[3216]: [ERROR] code=E504 upstream timeout tras 45s contra dbnode1
+2026-09-24T01:15:57-03:00 web02 tienda-api[3216]: [WARN] el certificado de tienda.local vence en 12 dias
+2026-09-24T01:16:27-03:00 web02 tienda-api[3216]: [INFO] respaldo diario completado en 12 min
+2026-09-24T01:17:17-03:00 web02 tienda-api[3216]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T01:18:19-03:00 web02 tienda-api[3216]: [WARN] el certificado de tienda.local vence en 12 dias
+2026-09-24T01:18:49-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T01:19:33-03:00 web02 tienda-api[3216]: [INFO] respaldo diario completado en 12 min
+2026-09-24T01:19:38-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T01:20:39-03:00 web02 tienda-api[3216]: [INFO] resumen horario: ERROR rate 0.4% sobre 18400 peticiones
+2026-09-24T01:21:14-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:21:59-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:22:06-03:00 web02 tienda-api[3216]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T01:22:09-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T01:23:00-03:00 web02 tienda-api[3216]: [WARN] memoria del proceso al 87%
+2026-09-24T01:23:26-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T01:23:29-03:00 web02 tienda-api[3216]: [ERROR] code=E401 token vencido para el usuario mrodriguez
+2026-09-24T01:23:59-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T01:24:48-03:00 web02 tienda-api[3216]: [WARN] disco /var al 78% de uso
+2026-09-24T01:25:37-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T01:26:46-03:00 web02 tienda-api[3216]: [WARN] cola de trabajos en 480 items
+2026-09-24T01:27:22-03:00 web02 tienda-api[3216]: [error] cache miss en la capa de compatibilidad
+2026-09-24T01:28:18-03:00 web02 tienda-api[3216]: [WARN] disco /var al 78% de uso
+2026-09-24T01:28:43-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T01:29:12-03:00 web02 tienda-api[3216]: [WARN] disco /var al 78% de uso
+2026-09-24T01:30:20-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T01:31:14-03:00 web02 tienda-api[3216]: [error] reintento silencioso de la libreria interna (no cuenta como fallo)
+2026-09-24T01:31:29-03:00 web02 tienda-api[3216]: [WARN] el certificado de tienda.local vence en 12 dias
+2026-09-24T01:32:07-03:00 web02 tienda-api[3216]: [WARN] cola de trabajos en 480 items
+2026-09-24T01:32:33-03:00 web02 tienda-api[3216]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T01:33:06-03:00 web02 tienda-api[3216]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.77
+2026-09-24T01:34:16-03:00 web02 tienda-api[3216]: [WARN] disco /var al 78% de uso
+2026-09-24T01:34:38-03:00 web02 tienda-api[3216]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T01:34:48-03:00 web02 tienda-api[3216]: [WARN] memoria del proceso al 87%
+2026-09-24T01:35:28-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T01:35:51-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T01:36:19-03:00 web02 tienda-api[3216]: [INFO] respaldo diario completado en 12 min
+2026-09-24T01:37:23-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T01:37:51-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T01:38:42-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:39:02-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T01:39:34-03:00 web02 tienda-api[3216]: [WARN] cola de trabajos en 480 items
+2026-09-24T01:40:33-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T01:41:43-03:00 web02 tienda-api[3216]: [INFO] respaldo diario completado en 12 min
+2026-09-24T01:42:21-03:00 web02 tienda-api[3216]: [INFO] respaldo diario completado en 12 min
+2026-09-24T01:43:01-03:00 web02 tienda-api[3216]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T01:43:05-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T01:43:24-03:00 web02 tienda-api[3216]: [WARN] el certificado de tienda.local vence en 12 dias
+2026-09-24T01:43:45-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T01:44:35-03:00 web02 tienda-api[3216]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T01:44:49-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T01:45:45-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T01:45:56-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T01:46:41-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:47:48-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:48:01-03:00 web02 tienda-api[3216]: [ERROR] code=E401 token vencido para el usuario mrodriguez
+2026-09-24T01:48:40-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:48:48-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T01:49:57-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T01:50:25-03:00 web02 tienda-api[3216]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T01:50:51-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T01:51:25-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:52:11-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T01:52:35-03:00 web02 tienda-api[3216]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T01:53:19-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T01:53:44-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:54:45-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T01:55:19-03:00 web02 tienda-api[3216]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T01:56:17-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T01:57:10-03:00 web02 tienda-api[3216]: [WARN] disco /var al 78% de uso
+2026-09-24T01:57:24-03:00 web02 tienda-api[3216]: [ERROR] code=E500 excepcion no controlada en /api/clientes
+2026-09-24T01:58:11-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T01:59:11-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T01:59:47-03:00 web02 tienda-api[3216]: [ERROR] code=E504 upstream timeout tras 30s
+2026-09-24T02:00:42-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T02:01:19-03:00 web02 tienda-api[3216]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T02:02:15-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T02:03:10-03:00 web02 tienda-api[3216]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T02:04:19-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T02:04:41-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:05:48-03:00 web02 tienda-api[3216]: [INFO] respaldo diario completado en 12 min
+2026-09-24T02:06:57-03:00 web02 tienda-api[3216]: [INFO] respaldo diario completado en 12 min
+2026-09-24T02:07:38-03:00 web02 tienda-api[3216]: [WARN] disco /var al 78% de uso
+2026-09-24T02:07:49-03:00 web02 tienda-api[3216]: [ERROR] code=E502 bad gateway desde 10.20.30.16
+2026-09-24T02:08:44-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T02:09:21-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:09:24-03:00 web02 tienda-api[3216]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.42
+2026-09-24T02:10:20-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T02:10:25-03:00 web02 tienda-api[3216]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T02:11:25-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T02:12:16-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:13:25-03:00 web02 tienda-api[3216]: [INFO] respaldo diario completado en 12 min
+2026-09-24T02:14:05-03:00 web02 tienda-api[3216]: [INFO] respaldo diario completado en 12 min
+2026-09-24T02:14:56-03:00 web02 tienda-api[3216]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T02:15:31-03:00 web02 tienda-api[3216]: [WARN] el certificado de tienda.local vence en 12 dias
+2026-09-24T02:15:43-03:00 web02 tienda-api[3216]: [WARN] memoria del proceso al 87%
+2026-09-24T02:16:19-03:00 web02 tienda-api[3216]: [INFO] respaldo diario completado en 12 min
+2026-09-24T02:17:13-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T02:17:43-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:18:43-03:00 web02 tienda-api[3216]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:18:49-03:00 web02 tienda-api[3216]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T02:19:17-03:00 web02 tienda-api[3216]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:20:04-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T02:20:46-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:21:09-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T02:22:07-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T02:22:19-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T02:22:32-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T02:22:53-03:00 web02 tienda-api[3216]: [WARN] cola de trabajos en 480 items
+2026-09-24T02:23:40-03:00 web02 tienda-api[3216]: [ERROR] code=E500 excepcion no controlada en /api/pedidos
+2026-09-24T02:24:37-03:00 web02 tienda-api[3216]: [ERROR] code=E500 excepcion no controlada en /api/clientes
+2026-09-24T02:25:11-03:00 web02 tienda-api[3216]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:26:05-03:00 web02 tienda-api[3216]: [INFO] respaldo diario completado en 12 min
+2026-09-24T02:26:42-03:00 web02 tienda-api[3216]: [WARN] memoria del proceso al 87%
+2026-09-24T02:27:32-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T02:27:59-03:00 web02 tienda-api[3216]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T02:28:17-03:00 web02 tienda-api[3216]: [ERROR] code=E507 sin espacio en /var/lib/tienda
+2026-09-24T02:28:32-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:29:20-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T02:29:36-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:29:49-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:30:20-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T02:31:30-03:00 web02 tienda-api[3216]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T02:32:36-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T02:33:40-03:00 web02 tienda-api[3216]: [WARN] memoria del proceso al 87%
+2026-09-24T02:33:54-03:00 web02 tienda-api[3216]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:34:42-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T02:34:50-03:00 web02 tienda-api[3216]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:34:59-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:35:15-03:00 web02 tienda-api[3216]: [WARN] el certificado de tienda.local vence en 12 dias
+2026-09-24T02:35:59-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T02:36:39-03:00 web02 tienda-api[3216]: [ERROR] code=E500 excepcion no controlada en /api/pedidos
+2026-09-24T02:37:42-03:00 web02 tienda-api[3216]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T02:38:13-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:38:37-03:00 web02 tienda-api[3216]: [ERROR] code=E504 upstream timeout tras 30s
+2026-09-24T02:39:11-03:00 web02 tienda-api[3216]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T02:39:22-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:40:00-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T02:40:40-03:00 web02 tienda-api[3216]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:41:42-03:00 web02 tienda-api[3216]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T02:42:06-03:00 web02 tienda-api[3216]: [WARN] disco /var al 78% de uso
+2026-09-24T02:42:55-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T02:43:46-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T02:44:36-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:44:43-03:00 web02 tienda-api[3216]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:45:08-03:00 web02 tienda-api[3216]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T02:45:29-03:00 web02 tienda-api[3216]: [WARN] memoria del proceso al 87%
+2026-09-24T02:46:27-03:00 web02 tienda-api[3216]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T02:47:33-03:00 web02 tienda-api[3216]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T02:47:54-03:00 web02 tienda-api[3216]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T02:48:57-03:00 web02 tienda-api[3216]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:49:31-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:49:59-03:00 web02 tienda-api[3216]: [INFO] respaldo diario completado en 12 min
+2026-09-24T02:50:42-03:00 web02 tienda-api[3216]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:51:19-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:51:45-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:52:27-03:00 web02 tienda-api[3216]: [ERROR] code=E401 token vencido para el usuario mrodriguez
+2026-09-24T02:53:11-03:00 web02 tienda-api[3216]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T02:53:19-03:00 web02 tienda-api[3216]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T02:53:31-03:00 web02 tienda-api[3216]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T02:54:17-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T02:54:45-03:00 web02 tienda-api[3216]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:55:24-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T02:55:56-03:00 web02 tienda-api[3216]: [INFO] rotacion de log completada
+2026-09-24T02:56:10-03:00 web02 tienda-api[3216]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T02:56:48-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:57:20-03:00 web02 tienda-api[3216]: [INFO] respaldo diario completado en 12 min
+2026-09-24T02:58:30-03:00 web02 tienda-api[3216]: [ERROR] code=E507 sin espacio en /var/log/tienda
+2026-09-24T02:59:17-03:00 web02 tienda-api[3216]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:59:59-03:00 web02 tienda-api[3216]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T03:00:41-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves
+2026-09-24T03:01:27-03:00 web02 tienda-api[3216]: [WARN] cola de trabajos en 480 items
+2026-09-24T03:02:18-03:00 web02 tienda-api[3216]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T03:02:21-03:00 web02 tienda-api[3216]: [INFO] cache caliente: 12400 claves

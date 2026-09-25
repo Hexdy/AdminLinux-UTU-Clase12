@@ -1,73 +1,50 @@
-# Reto de la semana — Clase 12 🏁 (la bandera)
+# 🏁 Cómo entregás la bandera (NO hay Pull Request)
 
-Arrancamos el bloque de automatización como en un trabajo real: **desplegás el entorno con
-Ansible**, **escribís tu propio script** para auditar lo que quedó, capturás la **bandera**
-y **se la decís al profe**.
+> En esta clase **no se entrega por Pull Request**. El reto es de tipo **CTF**: cuando
+> tengas la bandera verificada, **se la decís al profe**. Simple.
 
-> 🐧 No es hacking: es el laburo de un sysadmin junior. Te dejaron un servidor con un log
-> de 231 líneas y una carpeta de scripts viejos de un compañero que se fue, y te piden un
-> informe. La bandera es la **recompensa** por hacerlo bien.
+## Los 5 pasos
 
-> 🏁 **Este reto NO se entrega por Pull Request.** No tenés que subir nada al repo:
-> cuando tengas la bandera verificada, **se la decís al profe** (en clase o por el canal
-> del curso). Eso es todo.
+| # | Paso | Comando |
+|---|---|---|
+| 1 | Cloná el repo **fuera de Google Drive / OneDrive** | `git clone <url>` |
+| 2 | Preflight: ¿tenés todo? | `cd playbooks && bash comprobar_requisitos.sh` |
+| 3 | Desplegá el reto (corrélo **dos veces**: la 2ª debe dar `changed=0`) | `ansible-playbook armar_reto.yml -l local` |
+| 4 | Escribí **tu** script y sacá R1, R2 y R3 | `cat ../datos/reto/MISION.txt` |
+| 5 | Verificá la bandera | `ansible-playbook comprobar_bandera.yml -e "bandera=BANDERA{...}"` |
 
-## Pasos
+Cuando el playbook te diga **✅ ¡BANDERA CORRECTA!**, se la decís al profe (en clase o
+por el canal del curso). Eso es todo.
 
-1. **Cloná fuera de Drive**:
-   ```bash
-   git clone <url> ~/src/AdminLinux-UTU-Clase12
-   cd ~/src/AdminLinux-UTU-Clase12/playbooks
-   ```
-2. **Desplegá la estación con Ansible** (idempotente; simulá primero con `--check`):
-   ```bash
-   ./comprobar_requisitos.sh
-   ansible-playbook armar_reto.yml -l local --check --diff
-   ansible-playbook armar_reto.yml -l local
-   ```
-   Esto instala `shellcheck` y `gawk`, crea `datos/reto/` con los datos del servidor
-   y te deja tu `MISION.txt`. Corré el playbook **dos veces**: la 2ª da `changed=0`
-   (idempotencia).
-3. **Escribí tu script** `auditar.sh` (podés partir de `docs/plantilla_script.sh`). Tiene
-   que tener:
-   - `#!/usr/bin/env bash` y `set -euo pipefail`
-   - **validación**: que llegue el argumento y que el archivo exista y sea legible
-   - **todas** las variables entre comillas
-   - los errores a `stderr` (`>&2`)
-   - `exit 0` / `exit 1` / `exit 2` según corresponda
-   - que pase `shellcheck` limpio
-4. **Sacá las 3 respuestas** (leé tu `MISION.txt`):
-   - **R1** — cuántas líneas del log son de **nivel ERROR de verdad**.
-     ⚠️ `grep -c ERROR` **te miente**: cuenta también las que dicen "ERROR" adentro del
-     mensaje. Mirá el **segundo campo** de cada línea.
-   - **R2** — qué **servicio** acumula más líneas de nivel ERROR (el **tercer** campo).
-   - **R3** — cuántos archivos `.sh` de `scripts_reto/` **no** tienen shebang en la
-     línea 1.
-5. **Armá la bandera** con el formato exacto y **verificala** con Ansible:
-   ```bash
-   ansible-playbook comprobar_bandera.yml -e "bandera=BANDERA{<R1>-<R2>-<R3>}"
-   ```
-   Tiene que dar **✅ BANDERA CORRECTA**.
-6. **Decile la bandera al profe** — en clase o por el canal del curso. Con eso el reto
-   queda entregado. **No hace falta subir nada al repo** ni abrir un Pull Request.
+## Qué te vamos a preguntar cuando la digas
 
-## Cómo se evalúa (autoevaluación)
+No alcanza con el número: tenés que poder mostrar **tu script** y contestar:
 
-- [ ] Desplegaste con `armar_reto.yml` y lo corriste **2 veces** (la 2ª da `changed=0`).
-- [ ] Tu `auditar.sh` tiene shebang, `set -euo pipefail` y **comillas en todo**.
-- [ ] Valida el argumento y el archivo **antes** de tocarlo, y sale con `exit 2` si falta.
-- [ ] Los mensajes de error salen por `stderr`, no mezclados con el resultado.
-- [ ] `shellcheck auditar.sh` sale **limpio**.
-- [ ] **R1** cuenta el **nivel**, no la palabra suelta.
-- [ ] `comprobar_bandera.yml` te dio ✅ **BANDERA CORRECTA**.
-- [ ] Le **dijiste la bandera al profe**.
+- ¿Cómo recorriste los archivos? (si la respuesta es `$(ls)`, volvé a leer)
+- ¿Qué pasa si un archivo tiene un **espacio** en el nombre?
+- ¿Por qué `viejos/` no cuenta? ¿Qué te habría pasado con un `grep -r`?
+- ¿Por qué `[ERROR]` con corchetes y no `ERROR` a secas?
+- ¿Dónde está tu función y por qué sus variables son `local`?
+- ¿Qué devuelve tu script si le pasás una carpeta que no existe?
 
-> 🔒 El repo no guarda la bandera en claro, solo su **hash SHA-256**. Así se guardan las
-> contraseñas de verdad: nunca el secreto, solo su huella.
+## La lista de control antes de decirla
 
-> 🤖 Si le pedís el script a la IA: **leelo entero**, pasalo por `shellcheck`, y si tiene
-> un `rm` cambialo por `echo rm` para ver qué **habría** borrado. Las IA escriben scripts
-> sin comillas y sin `set -euo pipefail` todo el tiempo.
+- [ ] Mi script arranca con `#!/usr/bin/env bash` y `set -euo pipefail`
+- [ ] Recibe la carpeta **por argumento** y la valida
+- [ ] Recorre con **glob**, nunca `$(ls)`
+- [ ] **Todas** las variables entre comillas
+- [ ] Tiene al menos **una función** con `local`
+- [ ] Los errores van a `>&2`
+- [ ] Devuelve **0 / 1 / 2** según el caso (probalo: `echo $?`)
+- [ ] `shellcheck mi_script.sh` sale **limpio**
+- [ ] `ansible-playbook comprobar_bandera.yml -e "bandera=..."` da **✅**
 
-> 🪟 Si editás en Windows y al correrlo te dice `bash\r: command not found`, el archivo
-> quedó en CRLF: `dos2unix auditar.sh`.
+## ⚠️ No subas la bandera al repo
+
+La bandera **no va** en ningún commit, issue, ni comentario público. El repo guarda solo
+su **huella SHA-256** (`playbooks/secretos/bandera.sha256`) justamente para eso: es el
+mismo principio con el que se guardan las contraseñas. Si la publicás, le arruinás el
+reto a todo el grupo.
+
+> 💬 Si te trabaste: mostrame **tu script**, no la bandera. La mitad de las veces el bug
+> es una comilla o un acumulador adentro de un pipe (`docs/auto_estudio.md`, sección 1).

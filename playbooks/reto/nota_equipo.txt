@@ -1,18 +1,28 @@
-El equipo te deja esta nota:
+===============================================================
+  Nota del equipo de guardia  ·  AdminLinux Clase 12
+===============================================================
 
-  "Bienvenido/a al turno. Te dejamos el log de la app (app_reto.log) y la
-   carpeta scripts_reto/ con los scripts que heredamos del compañero que se
-   fue. Ninguno tiene encabezado profesional y varios ni siquiera arrancan
-   con shebang.
+Te dejo el material del incidente de anoche en logs/.
 
-   Escribí vos el auditor (auditar.sh) como corresponde: set -euo pipefail,
-   validación de argumentos, comillas en las variables y códigos de salida.
-   NO corras los scripts heredados a ciegas: están para que los leas.
+Tres avisos antes de que te pongas a contar:
 
-   Un compañero te va a decir 'de memoria' que la bandera era
-   BANDERA{58-catalogo-2}. NO le creas de memoria: sacá vos los números con
-   tu script y verificá con el playbook. Acá se verifica antes de confiar
-   (vale igual para lo que te sugiera una IA)."
+  1) Hay un archivo con un ESPACIO en el nombre. Si tu bucle usa
+     $(ls) se te va a partir en dos y vas a contar de menos.
+     Recorré con glob y entrecomillá la variable.
 
-Esta nota quedó en 0600 (solo la lee su dueño) a propósito: así se maneja un
-archivo con algo de valor. Security by design, desde el primer día.
+  2) Adentro de logs/ hay un subdirectorio viejos/ con material
+     del año pasado. NO es parte de este incidente: si grepeás
+     recursivo te va a ensuciar TODOS los numeros.
+     (Y si encontrás una BANDERA{...} ahí adentro: es la del reto
+      del año pasado. No sirve. Es un señuelo.)
+
+  3) Contá el nivel [ERROR] EXACTO. Las lineas [error] en
+     minuscula son ruido de una libreria y no son fallos, y hay
+     lineas [INFO] que nombran la palabra ERROR en un resumen.
+
+Formato de la bandera (esto es solo el molde, no la respuesta):
+
+      BANDERA{<R1>-<R2>-<R3>}         ejemplo de FORMA: BANDERA{00-hostX-00}
+
+Suerte. Cuando la tengas verificada, se la decis al profe.
+===============================================================

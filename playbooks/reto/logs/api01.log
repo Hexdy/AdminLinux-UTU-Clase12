@@ -1,0 +1,100 @@
+2026-09-24T02:09:56-03:00 api01 tienda-api[4002]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T02:10:41-03:00 api01 tienda-api[4002]: [INFO] respaldo diario completado en 12 min
+2026-09-24T02:10:49-03:00 api01 tienda-api[4002]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:11:07-03:00 api01 tienda-api[4002]: [ERROR] code=E504 upstream timeout tras 45s contra dbnode1
+2026-09-24T02:11:32-03:00 api01 tienda-api[4002]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.77
+2026-09-24T02:12:16-03:00 api01 tienda-api[4002]: [WARN] disco /var al 78% de uso
+2026-09-24T02:13:24-03:00 api01 tienda-api[4002]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:14:00-03:00 api01 tienda-api[4002]: [INFO] respaldo diario completado en 12 min
+2026-09-24T02:14:17-03:00 api01 tienda-api[4002]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T02:15:09-03:00 api01 tienda-api[4002]: [ERROR] code=E500 excepcion no controlada en /api/pedidos
+2026-09-24T02:15:35-03:00 api01 tienda-api[4002]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:16:32-03:00 api01 tienda-api[4002]: [INFO] rotacion de log completada
+2026-09-24T02:16:58-03:00 api01 tienda-api[4002]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:17:49-03:00 api01 tienda-api[4002]: [ERROR] code=E502 bad gateway desde 10.20.30.16
+2026-09-24T02:18:50-03:00 api01 tienda-api[4002]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T02:19:47-03:00 api01 tienda-api[4002]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:20:20-03:00 api01 tienda-api[4002]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:21:25-03:00 api01 tienda-api[4002]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T02:22:04-03:00 api01 tienda-api[4002]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:23:06-03:00 api01 tienda-api[4002]: [ERROR] code=E502 bad gateway desde 10.20.30.15
+2026-09-24T02:24:13-03:00 api01 tienda-api[4002]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:25:17-03:00 api01 tienda-api[4002]: [INFO] recordatorio: filtrar por el nivel exacto, no por la palabra ERROR suelta
+2026-09-24T02:26:04-03:00 api01 tienda-api[4002]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T02:26:26-03:00 api01 tienda-api[4002]: [error] reintento silencioso de la libreria interna (no cuenta como fallo)
+2026-09-24T02:27:24-03:00 api01 tienda-api[4002]: [ERROR] code=E504 upstream timeout tras 45s contra dbnode1
+2026-09-24T02:27:54-03:00 api01 tienda-api[4002]: [ERROR] code=E500 excepcion no controlada en /api/pedidos
+2026-09-24T02:28:19-03:00 api01 tienda-api[4002]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T02:29:21-03:00 api01 tienda-api[4002]: [ERROR] code=E504 upstream timeout tras 45s contra dbnode1
+2026-09-24T02:30:12-03:00 api01 tienda-api[4002]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:31:04-03:00 api01 tienda-api[4002]: [WARN] el certificado de tienda.local vence en 12 dias
+2026-09-24T02:31:46-03:00 api01 tienda-api[4002]: [ERROR] code=E504 upstream timeout tras 45s contra dbnode1
+2026-09-24T02:32:51-03:00 api01 tienda-api[4002]: [ERROR] code=E502 bad gateway desde 10.20.30.16
+2026-09-24T02:33:44-03:00 api01 tienda-api[4002]: [INFO] respaldo diario completado en 12 min
+2026-09-24T02:33:52-03:00 api01 tienda-api[4002]: [error] cache miss en la capa de compatibilidad
+2026-09-24T02:35:02-03:00 api01 tienda-api[4002]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.77
+2026-09-24T02:35:13-03:00 api01 tienda-api[4002]: [ERROR] code=E504 upstream timeout tras 30s
+2026-09-24T02:35:51-03:00 api01 tienda-api[4002]: [ERROR] code=E504 upstream timeout tras 30s
+2026-09-24T02:36:14-03:00 api01 tienda-api[4002]: [ERROR] code=E502 bad gateway desde 10.20.30.15
+2026-09-24T02:36:46-03:00 api01 tienda-api[4002]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:36:56-03:00 api01 tienda-api[4002]: [INFO] rotacion de log completada
+2026-09-24T02:37:41-03:00 api01 tienda-api[4002]: [ERROR] code=E502 bad gateway desde 10.20.30.16
+2026-09-24T02:38:45-03:00 api01 tienda-api[4002]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T02:39:52-03:00 api01 tienda-api[4002]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.77
+2026-09-24T02:40:06-03:00 api01 tienda-api[4002]: [WARN] disco /var al 78% de uso
+2026-09-24T02:40:15-03:00 api01 tienda-api[4002]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:40:58-03:00 api01 tienda-api[4002]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T02:41:35-03:00 api01 tienda-api[4002]: [WARN] memoria del proceso al 87%
+2026-09-24T02:42:40-03:00 api01 tienda-api[4002]: [WARN] el certificado de tienda.local vence en 12 dias
+2026-09-24T02:42:46-03:00 api01 tienda-api[4002]: [INFO] cache caliente: 12400 claves
+2026-09-24T02:43:53-03:00 api01 tienda-api[4002]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T02:44:47-03:00 api01 tienda-api[4002]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:45:29-03:00 api01 tienda-api[4002]: [WARN] disco /var al 78% de uso
+2026-09-24T02:46:37-03:00 api01 tienda-api[4002]: [WARN] el certificado de tienda.local vence en 12 dias
+2026-09-24T02:47:00-03:00 api01 tienda-api[4002]: [WARN] el certificado de tienda.local vence en 12 dias
+2026-09-24T02:47:03-03:00 api01 tienda-api[4002]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T02:47:09-03:00 api01 tienda-api[4002]: [ERROR] code=E503 servicio dependiente sin responder
+2026-09-24T02:48:01-03:00 api01 tienda-api[4002]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:48:20-03:00 api01 tienda-api[4002]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:49:04-03:00 api01 tienda-api[4002]: [INFO] rotacion de log completada
+2026-09-24T02:50:05-03:00 api01 tienda-api[4002]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:50:23-03:00 api01 tienda-api[4002]: [INFO] rotacion de log completada
+2026-09-24T02:51:05-03:00 api01 tienda-api[4002]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T02:51:54-03:00 api01 tienda-api[4002]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T02:52:42-03:00 api01 tienda-api[4002]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T02:53:17-03:00 api01 tienda-api[4002]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T02:54:10-03:00 api01 tienda-api[4002]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T02:54:32-03:00 api01 tienda-api[4002]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:55:02-03:00 api01 tienda-api[4002]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T02:55:56-03:00 api01 tienda-api[4002]: [ERROR] code=E504 upstream timeout tras 30s
+2026-09-24T02:56:18-03:00 api01 tienda-api[4002]: [ERROR] code=E502 bad gateway desde 10.20.30.16
+2026-09-24T02:56:47-03:00 api01 tienda-api[4002]: [ERROR] code=E504 upstream timeout tras 30s
+2026-09-24T02:56:59-03:00 api01 tienda-api[4002]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T02:57:43-03:00 api01 tienda-api[4002]: [WARN] disco /var al 78% de uso
+2026-09-24T02:57:56-03:00 api01 tienda-api[4002]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.42
+2026-09-24T02:58:31-03:00 api01 tienda-api[4002]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T02:58:44-03:00 api01 tienda-api[4002]: [ERROR] code=E504 upstream timeout tras 45s contra dbnode1
+2026-09-24T02:59:36-03:00 api01 tienda-api[4002]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T03:00:35-03:00 api01 tienda-api[4002]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T03:01:06-03:00 api01 tienda-api[4002]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T03:01:35-03:00 api01 tienda-api[4002]: [INFO] rotacion de log completada
+2026-09-24T03:01:39-03:00 api01 tienda-api[4002]: [WARN] disco /var al 78% de uso
+2026-09-24T03:02:28-03:00 api01 tienda-api[4002]: [ERROR] code=E504 upstream timeout tras 30s
+2026-09-24T03:03:25-03:00 api01 tienda-api[4002]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.42
+2026-09-24T03:04:06-03:00 api01 tienda-api[4002]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T03:05:14-03:00 api01 tienda-api[4002]: [INFO] respaldo diario completado en 12 min
+2026-09-24T03:05:59-03:00 api01 tienda-api[4002]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T03:06:23-03:00 api01 tienda-api[4002]: [INFO] rotacion de log completada
+2026-09-24T03:07:04-03:00 api01 tienda-api[4002]: [ERROR] code=E503 pool de conexiones agotado (max=40)
+2026-09-24T03:07:28-03:00 api01 tienda-api[4002]: [ERROR] code=E504 upstream timeout tras 45s contra dbnode1
+2026-09-24T03:08:05-03:00 api01 tienda-api[4002]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T03:08:38-03:00 api01 tienda-api[4002]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T03:09:25-03:00 api01 tienda-api[4002]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T03:10:12-03:00 api01 tienda-api[4002]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T03:11:04-03:00 api01 tienda-api[4002]: [ERROR] code=E502 bad gateway desde 10.20.30.16
+2026-09-24T03:11:45-03:00 api01 tienda-api[4002]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T03:11:48-03:00 api01 tienda-api[4002]: [INFO] cache caliente: 12400 claves
+2026-09-24T03:12:44-03:00 api01 tienda-api[4002]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T03:13:31-03:00 api01 tienda-api[4002]: [ERROR] code=E500 excepcion no controlada en /api/clientes
+2026-09-24T03:14:38-03:00 api01 tienda-api[4002]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T03:15:06-03:00 api01 tienda-api[4002]: [ERROR] code=E502 bad gateway desde 10.20.30.16

@@ -1,0 +1,132 @@
+# volcado del postmortem del año pasado (2025) — NO es material de este incidente
+2026-09-24T00:06:03-03:00 web02 tienda-api[3618]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T00:06:38-03:00 web02 tienda-api[3618]: [INFO] cache caliente: 12400 claves
+2026-09-24T00:07:30-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T00:08:29-03:00 web02 tienda-api[3618]: [INFO] rotacion de log completada
+2026-09-24T00:08:35-03:00 web02 tienda-api[3618]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T00:09:07-03:00 web02 tienda-api[3618]: [WARN] el certificado de tienda.local vence en 12 dias
+2026-09-24T00:09:47-03:00 web02 tienda-api[3618]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T00:10:18-03:00 web02 tienda-api[3618]: [INFO] cache caliente: 12400 claves
+2026-09-24T00:10:55-03:00 web02 tienda-api[3618]: [INFO] rotacion de log completada
+2026-09-24T00:11:31-03:00 web02 tienda-api[3618]: [INFO] respaldo diario completado en 12 min
+2026-09-24T00:11:51-03:00 web02 tienda-api[3618]: [WARN] disco /var al 78% de uso
+2026-09-24T00:12:44-03:00 web02 tienda-api[3618]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T00:12:47-03:00 web02 tienda-api[3618]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T00:13:13-03:00 web02 tienda-api[3618]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T00:13:30-03:00 web02 tienda-api[3618]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.77
+2026-09-24T00:14:04-03:00 web02 tienda-api[3618]: [ERROR] code=E500 excepcion no controlada en /api/clientes
+2026-09-24T00:14:21-03:00 web02 tienda-api[3618]: [ERROR] code=E502 bad gateway desde 10.20.30.16
+2026-09-24T00:15:28-03:00 web02 tienda-api[3618]: [ERROR] code=E502 bad gateway desde 10.20.30.15
+2026-09-24T00:16:10-03:00 web02 tienda-api[3618]: [WARN] disco /var al 78% de uso
+2026-09-24T00:17:05-03:00 web02 tienda-api[3618]: [ERROR] code=E503 pool de conexiones agotado (max=40)
+2026-09-24T00:18:14-03:00 web02 tienda-api[3618]: [INFO] respaldo diario completado en 12 min
+2026-09-24T00:18:56-03:00 web02 tienda-api[3618]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T00:19:35-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T00:20:22-03:00 web02 tienda-api[3618]: [INFO] respaldo diario completado en 12 min
+2026-09-24T00:21:09-03:00 web02 tienda-api[3618]: [ERROR] code=E401 token vencido para el usuario jgomez
+2026-09-24T00:22:08-03:00 web02 tienda-api[3618]: [error] cache miss en la capa de compatibilidad
+2026-09-24T00:22:32-03:00 web02 tienda-api[3618]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.77
+2026-09-24T00:23:07-03:00 web02 tienda-api[3618]: [ERROR] code=E503 servicio dependiente sin responder
+2026-09-24T00:23:57-03:00 web02 tienda-api[3618]: [WARN] cola de trabajos en 480 items
+2026-09-24T00:25:05-03:00 web02 tienda-api[3618]: [ERROR] code=E503 servicio dependiente sin responder
+2026-09-24T00:26:11-03:00 web02 tienda-api[3618]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T00:27:16-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T00:27:32-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T00:28:38-03:00 web02 tienda-api[3618]: [WARN] memoria del proceso al 87%
+2026-09-24T00:29:00-03:00 web02 tienda-api[3618]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T00:29:28-03:00 web02 tienda-api[3618]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T00:30:07-03:00 web02 tienda-api[3618]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.77
+2026-09-24T00:30:32-03:00 web02 tienda-api[3618]: [ERROR] code=E503 servicio dependiente sin responder
+2026-09-24T00:31:32-03:00 web02 tienda-api[3618]: [INFO] cache caliente: 12400 claves
+2026-09-24T00:31:47-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T00:32:26-03:00 web02 tienda-api[3618]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T00:33:25-03:00 web02 tienda-api[3618]: [ERROR] code=E502 bad gateway desde 10.20.30.15
+2026-09-24T00:33:44-03:00 web02 tienda-api[3618]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T00:34:29-03:00 web02 tienda-api[3618]: [ERROR] code=E500 excepcion no controlada en /api/clientes
+2026-09-24T00:34:36-03:00 web02 tienda-api[3618]: [ERROR] code=E507 sin espacio en /var/lib/tienda
+2026-09-24T00:34:42-03:00 web02 tienda-api[3618]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T00:35:10-03:00 web02 tienda-api[3618]: [error] cache miss en la capa de compatibilidad
+2026-09-24T00:35:21-03:00 web02 tienda-api[3618]: [INFO] respaldo diario completado en 12 min
+2026-09-24T00:35:36-03:00 web02 tienda-api[3618]: [ERROR] code=E401 token vencido para el usuario mrodriguez
+2026-09-24T00:35:58-03:00 web02 tienda-api[3618]: [WARN] cola de trabajos en 480 items
+2026-09-24T00:36:23-03:00 web02 tienda-api[3618]: [ERROR] code=E401 token vencido para el usuario jgomez
+2026-09-24T00:36:35-03:00 web02 tienda-api[3618]: [WARN] el certificado de tienda.local vence en 12 dias
+2026-09-24T00:37:14-03:00 web02 tienda-api[3618]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T00:38:04-03:00 web02 tienda-api[3618]: [ERROR] code=E401 token vencido para el usuario jgomez
+2026-09-24T00:38:52-03:00 web02 tienda-api[3618]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T00:38:57-03:00 web02 tienda-api[3618]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T00:39:37-03:00 web02 tienda-api[3618]: [ERROR] code=E500 excepcion no controlada en /api/clientes
+2026-09-24T00:40:03-03:00 web02 tienda-api[3618]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T00:40:25-03:00 web02 tienda-api[3618]: [INFO] resumen horario: ERROR rate 0.4% sobre 18400 peticiones
+2026-09-24T00:40:48-03:00 web02 tienda-api[3618]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.42
+2026-09-24T00:41:50-03:00 web02 tienda-api[3618]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T00:42:10-03:00 web02 tienda-api[3618]: [WARN] disco /var al 78% de uso
+2026-09-24T00:42:17-03:00 web02 tienda-api[3618]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T00:43:25-03:00 web02 tienda-api[3618]: [INFO] reconexion con dbnode1 establecida
+2026-09-24T00:44:25-03:00 web02 tienda-api[3618]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T00:44:57-03:00 web02 tienda-api[3618]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T00:45:43-03:00 web02 tienda-api[3618]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T00:46:10-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T00:46:35-03:00 web02 tienda-api[3618]: [ERROR] code=E502 bad gateway desde 10.20.30.16
+2026-09-24T00:47:45-03:00 web02 tienda-api[3618]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.42
+2026-09-24T00:48:37-03:00 web02 tienda-api[3618]: [ERROR] code=E502 bad gateway desde 10.20.30.15
+2026-09-24T00:48:45-03:00 web02 tienda-api[3618]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T00:49:02-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T00:49:53-03:00 web02 tienda-api[3618]: [ERROR] code=E500 excepcion no controlada en /api/clientes
+2026-09-24T00:50:40-03:00 web02 tienda-api[3618]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.77
+2026-09-24T00:51:19-03:00 web02 tienda-api[3618]: [ERROR] code=E502 bad gateway desde 10.20.30.16
+2026-09-24T00:52:23-03:00 web02 tienda-api[3618]: [ERROR] code=E507 sin espacio en /var/lib/tienda
+2026-09-24T00:53:07-03:00 web02 tienda-api[3618]: [ERROR] code=E500 excepcion no controlada en /api/pedidos
+2026-09-24T00:53:54-03:00 web02 tienda-api[3618]: [INFO] respaldo diario completado en 12 min
+2026-09-24T00:54:29-03:00 web02 tienda-api[3618]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T00:55:28-03:00 web02 tienda-api[3618]: [INFO] cache caliente: 12400 claves
+2026-09-24T00:55:56-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T00:56:44-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T00:56:56-03:00 web02 tienda-api[3618]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T00:57:15-03:00 web02 tienda-api[3618]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T00:58:04-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T00:58:56-03:00 web02 tienda-api[3618]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T00:59:00-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T00:59:27-03:00 web02 tienda-api[3618]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.77
+2026-09-24T01:00:11-03:00 web02 tienda-api[3618]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T01:00:29-03:00 web02 tienda-api[3618]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:01:23-03:00 web02 tienda-api[3618]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T01:01:48-03:00 web02 tienda-api[3618]: [INFO] respaldo diario completado en 12 min
+2026-09-24T01:02:35-03:00 web02 tienda-api[3618]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:03:24-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T01:04:32-03:00 web02 tienda-api[3618]: [WARN] disco /var al 78% de uso
+2026-09-24T01:05:02-03:00 web02 tienda-api[3618]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T01:05:52-03:00 web02 tienda-api[3618]: [INFO] cache caliente: 12400 claves
+2026-09-24T01:06:07-03:00 web02 tienda-api[3618]: [ERROR] code=E500 excepcion no controlada en /api/pedidos
+2026-09-24T01:06:57-03:00 web02 tienda-api[3618]: [INFO] respaldo diario completado en 12 min
+2026-09-24T01:08:02-03:00 web02 tienda-api[3618]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T01:08:41-03:00 web02 tienda-api[3618]: [ERROR] code=E500 excepcion no controlada en /api/pedidos
+2026-09-24T01:09:13-03:00 web02 tienda-api[3618]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T01:10:05-03:00 web02 tienda-api[3618]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T01:11:10-03:00 web02 tienda-api[3618]: [WARN] cola de trabajos en 480 items
+2026-09-24T01:12:02-03:00 web02 tienda-api[3618]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T01:12:30-03:00 web02 tienda-api[3618]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.77
+2026-09-24T01:12:41-03:00 web02 tienda-api[3618]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T01:13:00-03:00 web02 tienda-api[3618]: [ERROR] code=E500 excepcion no controlada en /api/clientes
+2026-09-24T01:13:47-03:00 web02 tienda-api[3618]: [WARN] conexion lenta con 192.168.10.23
+2026-09-24T01:14:11-03:00 web02 tienda-api[3618]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:14:51-03:00 web02 tienda-api[3618]: [ERROR] code=E500 excepcion no controlada en /api/clientes
+2026-09-24T01:14:59-03:00 web02 tienda-api[3618]: [WARN] latencia alta: 1840 ms en /api/stock
+2026-09-24T01:15:22-03:00 web02 tienda-api[3618]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.77
+2026-09-24T01:15:31-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T01:15:52-03:00 web02 tienda-api[3618]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T01:16:39-03:00 web02 tienda-api[3618]: [ERROR] code=E401 token vencido para el usuario jgomez
+2026-09-24T01:17:19-03:00 web02 tienda-api[3618]: [ERROR] code=E429 rate limit alcanzado para el cliente 172.16.8.42
+2026-09-24T01:17:56-03:00 web02 tienda-api[3618]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:18:32-03:00 web02 tienda-api[3618]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:19:03-03:00 web02 tienda-api[3618]: [INFO] usuario jgomez autenticado desde 192.168.10.47
+2026-09-24T01:20:00-03:00 web02 tienda-api[3618]: [INFO] usuario mrodriguez autenticado desde 192.168.10.23
+2026-09-24T01:20:58-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T01:21:41-03:00 web02 tienda-api[3618]: [INFO] rotacion de log completada
+2026-09-24T01:21:58-03:00 web02 tienda-api[3618]: [INFO] peticion POST /api/carrito 201 en 88 ms
+2026-09-24T01:22:16-03:00 web02 tienda-api[3618]: [WARN] reintento 2/5 contra dbnode1
+2026-09-24T01:23:18-03:00 web02 tienda-api[3618]: [ERROR] code=E507 sin espacio en /var/lib/tienda
+2026-09-24T01:23:47-03:00 web02 tienda-api[3618]: [WARN] disco /var al 78% de uso
+2026-09-24T01:24:57-03:00 web02 tienda-api[3618]: [INFO] peticion GET /api/pedidos 200 en 42 ms
+2026-09-24T01:26:07-03:00 web02 tienda-api[3618]: [WARN] conexion lenta con 192.168.10.23
+2025-11-02T23:58:11-03:00 web02 tienda-api[311]: [INFO] postmortem 2025 cerrado con BANDERA{198-web02-37} (del reto viejo, ya no sirve)

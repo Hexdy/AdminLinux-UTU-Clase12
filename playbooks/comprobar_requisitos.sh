@@ -8,34 +8,41 @@
 # Uso:   bash comprobar_requisitos.sh
 set -u
 
-echo "=== Comprobando requisitos para el reto de Ansible + shell scripting ==="
+echo "=== Comprobando requisitos para el reto de shell scripting ==="
 
 # --- 1) Detectar el gestor de paquetes de tu distro ----------------------
 if command -v apt-get >/dev/null 2>&1; then
   GESTOR="apt"
   INSTALAR="sudo apt update && sudo apt install -y"
   PKG_SHELLCHECK="shellcheck"
+  UNIT_CRON="cron.service"
+  PKG_CRON="cron"
 elif command -v pacman >/dev/null 2>&1; then
   GESTOR="pacman"
   INSTALAR="sudo pacman -Sy --needed"
   PKG_SHELLCHECK="shellcheck"
+  UNIT_CRON="cronie.service"
+  PKG_CRON="cronie"
 elif command -v dnf >/dev/null 2>&1; then
   GESTOR="dnf"
   INSTALAR="sudo dnf install -y"
-  PKG_SHELLCHECK="ShellCheck"
+  PKG_SHELLCHECK="ShellCheck"   # ojo: en Fedora va con mayúsculas
+  UNIT_CRON="crond.service"
+  PKG_CRON="cronie"
 else
   GESTOR="desconocido"
   INSTALAR=""
   PKG_SHELLCHECK="shellcheck"
+  UNIT_CRON="cron.service / cronie.service / crond.service (fijate con: systemctl list-units '*cron*')"
+  PKG_CRON="cron o cronie"
 fi
 echo "Distro / gestor de paquetes detectado: ${GESTOR}"
+echo "En esta distro el servicio de cron se llama: ${UNIT_CRON}  (paquete: ${PKG_CRON})"
 echo
 
 # --- 2) Comprobar cada herramienta requerida -----------------------------
 faltan=0
 
-# OJO: acá abajo hay una FUNCIÓN (comprobar). Las funciones se ven en la Clase 13;
-# este script es infraestructura del reto, no material de hoy. Podés leerlo igual.
 # $1 = comando a buscar, $2 = paquete a instalar si falta
 comprobar() {
   local cmd="$1" pkg="$2"
@@ -55,12 +62,36 @@ comprobar() {
 comprobar ansible-playbook ansible
 comprobar python3 python3
 comprobar bash bash
-# shellcheck y gawk los instala el propio playbook (armar_reto.yml), pero si
-# querés adelantarte, acá te dice el nombre del paquete EN TU DISTRO.
+# shellcheck lo instala el propio playbook (armar_reto.yml), pero si querés adelantarte:
 comprobar shellcheck "$PKG_SHELLCHECK"
-comprobar gawk gawk
 
-# --- 3) Resumen ----------------------------------------------------------
+# --- 3) ¿Tenés logger y journalctl? (los usamos en la clase) -------------
+echo
+if command -v logger >/dev/null 2>&1; then
+  echo "  [OK]    logger  ->  podés hacer que tus scripts dejen rastro en el journal"
+else
+  echo "  [AVISO] no encontré 'logger' (viene en util-linux o bsdutils). Instalalo si querés"
+  echo "          practicar la parte de logs propios."
+fi
+if command -v journalctl >/dev/null 2>&1 && [ -d /run/systemd/system ]; then
+  echo "  [OK]    journalctl + systemd  ->  podés leer lo que escribas con logger"
+else
+  echo "  [AVISO] no detecto systemd como PID 1 (¿WSL1, contenedor o initrd?)."
+  echo "          El RETO igual se resuelve: son archivos de texto, no necesitan systemd."
+fi
+
+# --- 4) ¿Está el demonio de cron? (opcional para la clase) ---------------
+echo
+if command -v crontab >/dev/null 2>&1; then
+  echo "  [OK]    crontab  ->  podés practicar 'crontab -l' y 'crontab -e'"
+  echo "          (acordate: 'crontab -l > ~/crontab_respaldo.txt' ANTES de tocar nada)"
+else
+  echo "  [AVISO] no tenés 'crontab' instalado (pasa seguido en Arch y en Fedora mínimo)."
+  echo "          Si querés practicar:  ${INSTALAR} ${PKG_CRON}"
+  echo "          y después:            sudo systemctl enable --now ${UNIT_CRON}"
+fi
+
+# --- 5) Resumen ----------------------------------------------------------
 echo
 if [ "$faltan" -eq 0 ]; then
   echo "=== Todo listo. Armá el reto: ==="
@@ -69,6 +100,6 @@ if [ "$faltan" -eq 0 ]; then
   exit 0
 else
   echo "=== Faltan ${faltan} requisito(s). Instalalos (arriba te digo cómo) y volvé a correr este script. ==="
-  echo "    (Nota: 'shellcheck' y 'gawk' también los instala el playbook armar_reto.yml por vos.)"
+  echo "    (Nota: 'shellcheck' también lo instala el playbook armar_reto.yml por vos.)"
   exit 1
 fi

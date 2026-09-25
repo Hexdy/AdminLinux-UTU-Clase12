@@ -1,262 +1,233 @@
-# Soluciones — Clase 12 (Shell scripting I)
+# Soluciones — Clase 12 · Shell scripting
 
-> Mirá esto **después** de intentarlo. Todas pasan `shellcheck` limpio y **no usan bucles
-> ni funciones** (eso es la Clase 13).
+> ⚠️ Mirá esto **después** de intentarlo. Copiar sin entender no te sirve para el parcial
+> (donde se lee código) ni para el reto (donde el script es tuyo).
+> Hay más de una forma correcta: si la tuya pasa `shellcheck` y hace lo mismo, está bien.
 
----
+## Bloque A — guardar
 
-### 1️⃣ Tu primer script
-
+**A1**
 ```bash
 #!/usr/bin/env bash
+# hola.sh - mi primer script.
 set -euo pipefail
-
 NOMBRE="Ulyses"
-echo "Hola, ${NOMBRE}. Hoy es $(date +%F)."
-exit 0
+echo "Hola, ${NOMBRE}!"
 ```
-
 ```bash
-chmod +x hola.sh
-./hola.sh
+chmod +x hola.sh && ./hola.sh
 ```
 
-**Por qué**: sin `chmod +x`, `./hola.sh` da *Permission denied* (el permiso `x` de la C6).
-Sin shebang, el sistema no sabe con qué interpretarlo.
+**A2** Sin `chmod +x` → `Permission denied` y `$?` = **126**. Con el nombre mal escrito →
+`command not found` y `$?` = **127**.
 
----
-
-### 2️⃣ El saludo con argumento
-
+**A3**
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
-
-if [[ $# -lt 1 ]]; then
-    echo "Uso: $0 <nombre>" >&2
-    exit 2
-fi
-
-NOMBRE="$1"
-echo "Hola, ${NOMBRE}."
-exit 0
+echo "Fecha    : $(date +%F)"
+echo "Hostname : $(hostname)"
+echo "Archivos : $(ls -1 /etc | wc -l)"
 ```
 
-Salida esperada:
-
-```
-$ ./saluda.sh Ulyses ; echo "codigo: $?"
-Hola, Ulyses.
-codigo: 0
-$ ./saluda.sh        ; echo "codigo: $?"
-Uso: ./saluda.sh <nombre>
-codigo: 2
+**A4**
+```bash
+DIR="${1:-/etc}"
+[[ -d "$DIR" ]] || { echo "ERROR: $DIR no es un directorio" >&2; exit 2; }
+echo "Archivos en $DIR : $(ls -1 "$DIR" | wc -l)"
 ```
 
-**Por qué**: el mensaje va a `stderr`, así que `2>/dev/null` lo hace desaparecer y el
-resultado "limpio" del script no se ensucia.
+**A5** `ls $ARCHIVO` se parte en dos palabras (`mi` y `informe.txt`) y busca **dos**
+archivos que no existen. `ls "$ARCHIVO"` pasa **un** argumento con el espacio adentro.
+Por eso: **siempre** `"$VAR"`.
 
----
+## Bloque B — decidir
 
-### 3️⃣ Contar de verdad
-
-`grep -c ERROR` cuenta **16** porque hay una línea `INFO` cuyo `msg=` contiene la palabra
-"ERROR". El **nivel** es el **segundo campo**:
-
+**B1 / B2**
 ```bash
 #!/usr/bin/env bash
+# revisar.sh <ruta>
 set -euo pipefail
-
-LOG="$1"
-errores=$(grep -cE '^[^ ]+ ERROR ' "$LOG")
-echo "${errores}"
-exit 0
+[[ $# -eq 1 ]] || { echo "uso: $0 <ruta>" >&2; exit 2; }
+RUTA="$1"
+if   [[ -d "$RUTA" ]]; then echo "$RUTA es un directorio"
+elif [[ -f "$RUTA" ]]; then
+    [[ -r "$RUTA" ]] || { echo "ERROR: existe pero no lo puedo leer" >&2; exit 2; }
+    echo "$RUTA es un archivo legible"
+else
+    echo "$RUTA no existe" >&2; exit 1
+fi
 ```
 
-```
-$ ./contar_errores.sh datos/app.log
-15
-```
-
-**Por qué**: `^[^ ]+ ERROR ` ancla al inicio: "algo sin espacios (la fecha), un espacio,
-ERROR, un espacio". Con `awk` (C5) sería `awk '$2=="ERROR"' "$LOG" | wc -l`.
-
----
-
-### 4️⃣ Validar antes de romper
-
+**B3**
 ```bash
 #!/usr/bin/env bash
+# umbral.sh <ruta_log> <umbral>
 set -euo pipefail
-
-if [[ $# -lt 1 ]]; then
-    echo "Uso: $0 <ruta-log>" >&2
-    exit 2
-fi
-
-LOG="$1"
-
-if [[ ! -f "$LOG" || ! -r "$LOG" ]]; then
-    echo "ERROR: no puedo leer ${LOG}" >&2
-    exit 2
-fi
-
-if [[ ! -s "$LOG" ]]; then
-    echo "AVISO: ${LOG} esta vacio" >&2
-    exit 0
-fi
-
-errores=$(grep -cE '^[^ ]+ ERROR ' "$LOG")
-echo "${errores}"
-exit 0
+[[ $# -eq 2 ]] || { echo "uso: $0 <ruta_log> <umbral>" >&2; exit 2; }
+LOG="$1"; UMBRAL="$2"
+[[ "$UMBRAL" =~ ^[0-9]+$ ]] || { echo "ERROR: umbral no entero" >&2; exit 2; }
+[[ -f "$LOG" && -r "$LOG" ]] || { echo "ERROR: no leo $LOG" >&2; exit 2; }
+errores="$(grep -c '\[ERROR\]' "$LOG" || true)"
+echo "errores: $errores (umbral $UMBRAL)"
+[[ "$errores" -le "$UMBRAL" ]] || exit 1
 ```
+El `|| true` es necesario porque `grep -c` devuelve **1** si no encuentra nada, y con
+`set -e` eso mataría el script.
 
-**Por qué**: `-f` (es archivo) + `-r` (lo puedo leer) **antes** de tocarlo. `-s` distingue
-"no está" de "está pero vacío", que son dos problemas distintos.
-
----
-
-### 5️⃣ El umbral
-
+**B4**
 ```bash
-#!/usr/bin/env bash
-set -euo pipefail
-
-if [[ $# -lt 1 ]]; then
-    echo "Uso: $0 <ruta-log> [umbral]" >&2
-    exit 2
-fi
-
-LOG="$1"
-UMBRAL="${2:-10}"
-
-[[ -f "$LOG" && -r "$LOG" ]] || { echo "ERROR: no puedo leer ${LOG}" >&2; exit 2; }
-
-errores=$(grep -cE '^[^ ]+ ERROR ' "$LOG")
-printf '%-10s %s\n' "ERRORES:" "${errores}"
-
-if [[ "$errores" -gt "$UMBRAL" ]]; then
-    echo "AVISO: ${errores} errores superan el umbral de ${UMBRAL}" >&2
-    exit 1
-fi
-
-exit 0
-```
-
-```
-$ ./contar_errores.sh datos/app.log 20 ; echo "codigo: $?"
-ERRORES:   15
-codigo: 0
-$ ./contar_errores.sh datos/app.log 5  ; echo "codigo: $?"
-ERRORES:   15
-AVISO: 15 errores superan el umbral de 5
-codigo: 1
-```
-
-**Por qué**: `"${2:-10}"` da un valor por defecto. `-gt` porque son **números**: con `>`
-compararía texto y `"9" > "10"` daría verdadero.
-
----
-
-### 6️⃣ El reporte con `printf`
-
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-
-[[ $# -ge 1 ]] || { echo "Uso: $0 <ruta-log>" >&2; exit 2; }
-LOG="$1"
-[[ -f "$LOG" && -r "$LOG" ]] || { echo "ERROR: no puedo leer ${LOG}" >&2; exit 2; }
-
-info=$(grep -cE '^[^ ]+ INFO '  "$LOG")
-warn=$(grep -cE '^[^ ]+ WARN '  "$LOG")
-err=$(grep -cE  '^[^ ]+ ERROR ' "$LOG")
-total=$(( info + warn + err ))
-
-printf '%-8s %4d\n' "INFO"  "$info"
-printf '%-8s %4d\n' "WARN"  "$warn"
-printf '%-8s %4d\n' "ERROR" "$err"
-printf '%-8s %4d\n' "TOTAL" "$total"
-exit 0
-```
-
-```
-INFO       50
-WARN       13
-ERROR      15
-TOTAL      78
-```
-
-**Por qué**: `%-8s` alinea el texto a la izquierda en 8 lugares y `%4d` el número a la
-derecha en 4 → columnas prolijas. `$(( ))` suma enteros.
-
----
-
-### 7️⃣ El menú con `case`
-
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-
-[[ $# -ge 1 ]] || { echo "Uso: $0 {start|stop|status}" >&2; exit 2; }
-
-case "$1" in
-    start)   echo "Arrancaria el servicio (systemctl start nginx)"  ;;
-    stop)    echo "Pararia el servicio (systemctl stop nginx)"      ;;
-    status)  echo "Consultaria el estado (systemctl status nginx)"  ;;
-    *)       echo "Uso: $0 {start|stop|status}" >&2 ; exit 2        ;;
+case "${1:-}" in
+    --ayuda|-h) echo "uso: $0 <ruta_log> <umbral>"; exit 0 ;;
 esac
-
-exit 0
 ```
 
-**Por qué**: `case` es más legible que un `if/elif` de 4 ramas cuando comparás **la misma
-variable** contra varios valores fijos. El `*)` es el "si no fue ninguno" y **siempre** va.
+**B5** `>` dentro de `[[ ]]` compara **texto**: va carácter por carácter. `"10" > "9"` es
+verdadero al revés de lo que uno espera cuando los números tienen distinta cantidad de
+dígitos (`"9"` empieza con `9`, que es mayor que `1`). Para números: `-gt`, `-lt`, etc.
 
----
+## Bloque C — repetir
 
-### 8️⃣ 🤖 Revisión de IA
+**C1**
+```bash
+while IFS= read -r s; do
+    [[ "$s" =~ ^# || -z "$s" ]] && continue
+    echo "servicio: $s"
+done < datos/servicios.txt
+```
+`for s in $(cat archivo)` parte por **espacios**, no por líneas: un valor con espacio se
+rompe, y además carga todo el archivo en memoria.
 
-**Los problemas del script original:**
+**C2**
+```bash
+for f in datos/*.log; do
+    [[ -e "$f" ]] || continue
+    printf '%-24s %s\n' "$(basename "$f")" "$(wc -l < "$f")"
+done
+```
 
-| # | Problema | Por qué importa |
-|---|---|---|
-| 1 | `DESTINO = $1` | espacios alrededor del `=` → `DESTINO: command not found` |
-| 2 | Falta `set -euo pipefail` | si algo falla, sigue igual y "termina bien" |
-| 3 | `$DESTINO` sin comillas | si la ruta tiene un espacio, `rm` borra otra cosa |
-| 4 | No valida `$1` | si viene vacío, `rm -rf /*` con tus permisos |
-| 5 | No valida que sea un directorio | podría apuntar a cualquier lado |
-| 6 | `#!/bin/bash` | `#!/usr/bin/env bash` es más portable entre distros |
-| 7 | Todo va a `stdout` | los errores tendrían que ir a `stderr` |
-| 8 | Nunca hace `exit` | quien lo llame (cron, CI) no sabe si salió bien |
+**C3** Con `for f in $(ls)`: `prueba`, `con`, `espacio.log` → tres vueltas, tres nombres
+inexistentes. Con `for f in *.log`: una sola vuelta con `prueba con espacio.log` entero.
 
-**Reescrito:**
+**C4**
+```bash
+while IFS=';' read -r host ip ambiente; do
+    [[ "$host" =~ ^# || -z "$host" ]] && continue
+    printf '%-10s %s\n' "$host" "$ambiente"
+done < datos/hosts.txt
+```
 
+**C5**
+```bash
+total=0
+while read -r n; do
+    total=$(( total + n ))
+done < <(grep -c '\[ERROR\]' datos/*.log)
+echo "total: $total"
+```
+Con `grep -c ... | while read` el bucle corre en un **proceso hijo**: acumula sobre una
+**copia** de `total` que muere al terminar el pipe, y el padre sigue en 0.
+La redirección de proceso `< <(...)` deja el `while` en el padre.
+
+## Bloque D — ordenar
+
+**D1 / D2**
+```bash
+contar_errores() {
+    local archivo="$1"
+    grep -c '\[ERROR\]' "$archivo" || true
+}
+validar_log() {
+    local archivo="$1"
+    [[ -f "$archivo" && -r "$archivo" ]] || return 1
+}
+if validar_log "datos/app_demo.log"; then
+    n="$(contar_errores "datos/app_demo.log")"
+    echo "errores: $n"
+fi
+```
+
+**D3** Sin `local`, la `f` de la función es la **misma** `f` del `for`: al volver de la
+función el bucle continúa con el valor cambiado → resultados mezclados o bucle que nunca
+avanza. Con `local f` cada una juega en su cancha.
+
+**D4**
 ```bash
 #!/usr/bin/env bash
+# reporte.sh <directorio>
 set -euo pipefail
+TAG="$(basename "$0" .sh)"
 
-if [[ $# -lt 1 ]]; then
-    echo "Uso: $0 <directorio-a-limpiar>" >&2
-    exit 2
-fi
+log()     { printf '[%s] %s\n' "$(date '+%F %T')" "$*" >&2; }
+uso()     { echo "uso: $0 <directorio>" >&2; exit 2; }
+validar() { local d="$1"; [[ -d "$d" && -r "$d" ]] || return 1; }
 
-DESTINO="${1:?Falta la ruta a limpiar}"
+contar_errores() { local a="$1"; grep -c '\[ERROR\]' "$a" || true; }
 
-if [[ ! -d "$DESTINO" ]]; then
-    echo "ERROR: ${DESTINO} no es un directorio" >&2
-    exit 2
-fi
+main() {
+    (( $# == 1 )) || uso
+    local dir="$1" f total=0 n
+    validar "$dir" || { log "no sirve: $dir"; return 2; }
+    for f in "$dir"/*.log; do
+        [[ -e "$f" ]] || continue
+        n="$(contar_errores "$f")"
+        printf '%-24s %4s\n' "$(basename "$f")" "$n"
+        total=$(( total + n ))
+    done
+    printf '%-24s %4s\n' "TOTAL" "$total"
+}
 
-echo "Limpiando ${DESTINO}"
-rm -rf "${DESTINO:?}"/*     # el :? es el cinturon extra: si esta vacia, corta
-echo "Listo"
-exit 0
+main "$@"
 ```
 
-> 🔎 **Probalo primero sin borrar nada**: cambiá la línea del `rm` por
-> `echo rm -rf "${DESTINO:?}"/*` y mirá **qué habría borrado**. Recién después, si estás
-> seguro, sacá el `echo`.
+## Bloque E — dejar rastro y correr solo
 
-**Moraleja**: la IA escribe rápido; el que firma el incidente sos vos. `shellcheck` +
-leerlo entero, **siempre**.
+**E1**
+```bash
+logger -t "$TAG" -p user.info "arranco sobre $dir"
+logger -t "$TAG" -p user.err  "no pude leer $dir"
+journalctl -t reporte -n 20 --no-pager
+```
+
+**E2**
+```
+(a) 30 2 * * *        (b) */5 * * * *
+(c) 0 7 * * 1         (d) 0 0 1 * *
+```
+
+**E3** Los tres problemas:
+1. `respaldo.sh` sin **ruta absoluta**: el PATH de cron es mínimo → `/usr/local/bin/respaldo.sh`.
+2. El `%` de `date +%F` es **especial** en el crontab: hay que escaparlo (`\%F`) o, mejor,
+   armar el nombre **adentro** del script.
+3. Solo redirige `stdout`: los errores se pierden. Va `>> ... 2>&1`, o directamente `logger`.
+
+```bash
+0 3 * * * /usr/local/bin/respaldo.sh >> /var/log/respaldo.log 2>&1
+```
+
+**E4**
+```bash
+crontab -l > ~/crontab_$(date +%F).bak     # PRIMERO el respaldo
+crontab -e                                  # agregás:  */1 * * * * /ruta/absoluta/reporte.sh /ruta/datos
+journalctl -t reporte --since '-5 min' --no-pager
+crontab -e                                  # y la borrás
+```
+
+**E5** `cron.service` en Debian/Ubuntu, `cronie.service` en Arch, `crond.service` en
+Fedora/RHEL. Se averigua con `systemctl list-units '*cron*'`.
+
+## Bloque F — integrador
+
+**F1 / F2** — es el script de **D4** más: el argumento opcional del umbral
+(`local umbral="${2:-20}"`), la columna de líneas (`wc -l < "$f"`), y al final:
+
+```bash
+    if (( total > umbral )); then
+        logger -t "$TAG" -p user.err "total $total supera el umbral $umbral"
+        log "ALERTA: $total errores"
+        return 1
+    fi
+    return 0
+```
+
+**F3** — el reto es tuyo. Acá no hay solución: la bandera se la decís al profe. 🏁

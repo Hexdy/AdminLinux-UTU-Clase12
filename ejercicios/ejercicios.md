@@ -1,122 +1,103 @@
-# Ejercicios — Clase 12 (Shell scripting I)
+# Ejercicios — Clase 12 · Shell scripting
 
-> Todos sobre `datos/app.log` (78 líneas). Formato de cada línea:
->
-> ```
-> 2026-09-14T00:19:45 INFO catalogo u=adominguez ip=10.20.4.70 msg="cache actualizada"
->      $1            $2    $3          $4              $5            $6...
-> ```
->
-> **Reglas de la casa** (valen para todos): shebang `#!/usr/bin/env bash`,
-> `set -euo pipefail`, **todas** las variables entre comillas, errores a `>&2`, `exit`
-> explícito, y **`shellcheck` limpio** antes de decir "listo".
->
-> ⚠️ **Sin bucles ni funciones** — eso es la Clase 13. Se resuelve todo con lo de hoy.
+> Trabajá en `datos/` (ahí están `app_demo.log`, `servicios.txt` y `hosts.txt`).
+> Las soluciones están en `soluciones.md`: **miralas recién después de intentarlo**.
+> Pasale `shellcheck` a **todos** tus scripts: tiene que salir limpio.
 
----
+## Bloque A — Escalón 1: guardar
 
-### 1️⃣ Tu primer script
+**A1.** Escribí `hola.sh` que salude con tu nombre. Tiene que tener shebang,
+`set -euo pipefail` y un comentario de cabecera. Dale permiso y corrélo con `./hola.sh`.
 
-Escribí `hola.sh` que salude con tu nombre y muestre la fecha de hoy. Tiene que correr con
-`./hola.sh` (no con `bash hola.sh`).
+**A2.** ¿Qué código de salida te da correr `./hola.sh` **sin** haberle dado `chmod +x`?
+¿Y si escribís mal el nombre? Comprobalo con `echo $?`.
 
-*Pistas: shebang, `chmod +x`, `$(date +%F)`.*
+**A3.** Escribí `info_sistema.sh` que muestre, cada uno en su línea: la fecha (`date +%F`),
+el hostname, y cuántos archivos hay en `/etc`. Usá `$( )` para todos.
 
----
+**A4.** Hacé que `info_sistema.sh` acepte un directorio **por argumento** y cuente ahí.
+Si no le pasan nada, que use `/etc` (valor por defecto con `${1:-/etc}`).
 
-### 2️⃣ El saludo con argumento
+**A5.** Guardá `ARCHIVO="mi informe.txt"` y probá `ls $ARCHIVO` y `ls "$ARCHIVO"`.
+Explicá en un comentario por qué dan distinto.
 
-Escribí `saluda.sh` que reciba un nombre por argumento y salude. Si **no** le pasás
-ningún argumento, tiene que imprimir `Uso: ./saluda.sh <nombre>` **por stderr** y salir
-con código **2**.
+## Bloque B — Escalón 2: decidir
 
-Probá que funcionó:
+**B1.** Escribí `revisar.sh <ruta>` que diga si la ruta es un archivo, un directorio o
+no existe. Usá `[[ ]]` y `elif`.
 
-```bash
-./saluda.sh Ulyses ; echo "codigo: $?"
-./saluda.sh        ; echo "codigo: $?"
-./saluda.sh 2>/dev/null   # el mensaje de error NO tiene que aparecer
-```
+**B2.** Mejorá `revisar.sh`: si es un archivo pero **no** lo podés leer, avisá por
+`>&2` y salí con código 2.
 
----
+**B3.** Escribí `umbral.sh <ruta_log> <umbral>` que cuente las líneas `[ERROR]` de
+`datos/app_demo.log` y salga con `1` si superan el umbral, `0` si no. Validá que el
+umbral sea un número.
 
-### 3️⃣ Contar de verdad
+**B4.** Agregale a `umbral.sh` un `case` que acepte como primer argumento `--ayuda`
+y muestre el uso saliendo con 0.
 
-`grep -c ERROR datos/app.log` da **16**, pero las líneas de **nivel** ERROR son **15**.
-Averiguá por qué y escribí `contar_errores.sh <ruta-log>` que imprima el número correcto.
+**B5.** ¿Por qué `[[ "10" > "9" ]]` es **verdadero** y `[[ 10 -gt 9 ]]` también, pero
+`[[ "10" > "9" ]]` con números grandes te puede engañar? Dejá la explicación en un
+comentario.
 
-*Pista: el nivel es el **segundo campo**. Una línea tiene la palabra "ERROR" adentro del
-`msg=`.*
+## Bloque C — Escalón 3: repetir
 
----
+**C1.** Escribí un `for` que imprima cada servicio de `datos/servicios.txt`... y
+explique por qué **no** conviene hacerlo con `for s in $(cat archivo)`.
 
-### 4️⃣ Validar antes de romper
+**C2.** Recorré con **glob** todos los `.log` de `datos/` e imprimí `nombre: cantidad de
+líneas`. Acordate del `[[ -e "$f" ]] || continue`.
 
-Ampliá el script anterior para que, **antes** de contar:
+**C3.** Creá a mano un archivo llamado `prueba con espacio.log` en una carpeta de
+juguete. Recorré la carpeta con `for f in $(ls)` y después con `for f in *.log`.
+Mostrá la diferencia.
 
-- corte con `exit 2` si no llegó el argumento,
-- corte con `exit 2` si el archivo no existe o no se puede leer,
-- avise y salga con `exit 0` si el archivo existe pero está **vacío**.
+**C4.** Leé `datos/hosts.txt` línea por línea con `while IFS= read -r` y, salteando los
+comentarios (`#`), imprimí solo el host y el ambiente (campos 1 y 3, separados por `;`).
 
-Probalo con `./contar_errores.sh /etc/shadow` (ese no lo podés leer) y con
-`./contar_errores.sh no_existe.log`.
+**C5.** 🔴 Sumá el total de líneas `[ERROR]` de todos los `.log` de `datos/` usando un
+acumulador. Probá primero con `grep -c ... | while read` y explicá por qué da 0.
 
----
+## Bloque D — Escalón 4: ordenar
 
-### 5️⃣ El umbral
+**D1.** Escribí una función `contar_errores <archivo>` que devuelva el número por `echo`
+y usala con `n="$(contar_errores ...)"`.
 
-Ampliá otra vez: que acepte un **segundo argumento opcional** (`umbral`, por defecto
-`10`). Si la cantidad de errores **supera** el umbral, que avise por `stderr` y salga con
-**1**. Si no, `exit 0`.
+**D2.** Escribí una función `validar_log <archivo>` que **no** imprima nada y use
+`return 0` / `return 1`. Usala en un `if`.
 
-```bash
-./contar_errores.sh datos/app.log 20 ; echo "codigo: $?"   # tiene que dar 0
-./contar_errores.sh datos/app.log 5  ; echo "codigo: $?"   # tiene que dar 1
-```
+**D3.** Demostrá el problema de no usar `local`: escribí una función que use una
+variable `f` sin `local` y llamala desde adentro de un `for f in ...`.
 
----
+**D4.** Reescribí tu script del ejercicio C5 con la estructura
+`log() / uso() / validar() / main()` + `main "$@"` al final.
 
-### 6️⃣ El reporte con `printf`
+## Bloque E — Escalón 5: dejar rastro y correr solo
 
-Escribí `reporte.sh <ruta-log>` que imprima, **en columnas alineadas**, cuántas líneas hay
-de cada nivel (`INFO`, `WARN`, `ERROR`) y el total.
+**E1.** Hacé que tu script de D4 escriba dos mensajes con `logger -t` (uno `user.info`
+al arrancar, uno `user.err` si falla). Leelos con `journalctl -t ... --no-pager`.
 
-*Pista: `printf "%-8s %4d\n"`. Podés contar cada nivel con un `grep -c` anclado al segundo
-campo. **Sin bucles**: tres líneas, una por nivel.*
+**E2.** Escribí la línea de crontab para: (a) todos los días a las 02:30;
+(b) cada 5 minutos; (c) los lunes a las 07:00; (d) el día 1 de cada mes a medianoche.
 
----
+**E3.** ¿Qué tiene de malo esta línea? Arreglala:
+`0 3 * * * respaldo.sh > /backup/$(date +%F).log`  (hay **tres** problemas).
 
-### 7️⃣ El menú con `case`
+**E4.** Respaldá tu crontab, agendá tu script del E1 para dentro de 2 minutos, verificá
+en el journal que corrió, y **borrá** la entrada.
 
-Escribí `servicio.sh` que reciba `start`, `stop`, `status` o cualquier otra cosa, y que
-solo **imprima** qué haría en cada caso (no ejecutes `systemctl` de verdad). Para
-cualquier otro valor: mensaje de uso por `stderr` y `exit 2`.
+**E5.** ¿Cómo se llama el servicio de cron **en tu distro**? Averigualo con
+`systemctl list-units '*cron*'` y mirá su log con `journalctl -u <unit> --no-pager`.
 
----
+## Bloque F — Integrador
 
-### 8️⃣ 🤖 Revisión de IA
+**F1.** Escribí `reporte_logs.sh <directorio>` que, con los 5 escalones, imprima una
+tabla con `printf` de `archivo | lineas | errores` para cada `.log`, y al final el total.
+Que valide el argumento, use al menos una función con `local`, mande los errores a
+`>&2`, devuelva 0/1/2 y pase `shellcheck` limpio.
 
-Una IA te dio esto:
+**F2.** Agregale a `reporte_logs.sh` un segundo argumento opcional: el umbral de errores
+a partir del cual sale con código 1 y escribe un `logger -p user.err`.
 
-```bash
-#!/bin/bash
-DESTINO = $1
-echo "Limpiando $DESTINO"
-rm -rf $DESTINO/*
-echo "Listo"
-```
-
-Encontrá **al menos 5 problemas** y reescribilo bien. No lo ejecutes.
-
-*Pista: mirá el `=`, el shebang, las comillas, qué pasa si `$1` viene vacío, y qué falta
-arriba de todo.*
-
----
-
-## ✅ Antes de entregar
-
-```bash
-shellcheck *.sh     # tiene que salir limpio
-bash -n mi.sh       # sintaxis OK
-file mi.sh          # NO debe decir "with CRLF line terminators"
-```
+**F3.** 🏁 Con todo esto ya tenés las piezas del **reto de la bandera**. Volvé a
+`playbooks/README.md`.

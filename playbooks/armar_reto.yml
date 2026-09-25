@@ -1,19 +1,21 @@
 ---
-# armar_reto.yml — Desplegá tu estación para auditar el servidor que te dejaron.
+# armar_reto.yml — Desplegá el material del postmortem de la noche fea.
 # MULTI-DISTRO: Debian/Ubuntu (apt) · Arch (pacman) · Fedora/RHEL (dnf).
 #
-# ESCENARIO (no es hacking, es laburo de sysadmin junior): te dan de alta en un
-# equipo, el compañero que se fue dejó una app con su log y una carpeta de scripts
-# viejos, y te piden un informe. Este playbook, en un solo paso:
+# ESCENARIO (no es hacking, es laburo de SRE): la plataforma de la tienda tuvo una
+# noche fea y te dejaron los logs de TODOS los hosts. Son demasiados para mirarlos a
+# mano: para eso existen los scripts. Este playbook, en un solo paso:
 #   1) Comprueba que tu distro esté soportada.
-#   2) Instala shellcheck y gawk con el módulo genérico 'package' (apt, pacman o
-#      dnf según tu distro), envuelto en block/rescue: si no hay sudo o no hay red,
-#      avisa y sigue (el reto se resuelve igual con grep, que ya tenés).
-#   3) Crea el área de trabajo  datos/reto/          (módulo file).
-#   4) Copia el material: el log de la app y los scripts viejos  (módulo copy).
+#   2) Instala shellcheck con el módulo genérico 'package' (apt, pacman o dnf según tu
+#      distro), envuelto en block/rescue: si no hay sudo o no hay red, avisa y sigue.
+#      OJO: en Fedora/RHEL el paquete se llama 'ShellCheck' (con mayúsculas). Esa es
+#      la trampa multi-distro de esta clase, hermana del cron/cronie/crond.
+#   3) Crea el área de trabajo  datos/reto/logs/          (módulo file).
+#   4) Copia el material del incidente: 10 logs + el ruido + el material viejo.
 #   5) Genera una MISION.txt personalizada con TUS datos  (módulo template + facts).
 #   6) Deja la nota del equipo con permisos 0600 = solo su dueño  (security by design).
-#   7) Te recuerda la plantilla de script y dónde está shellcheck.
+#   7) Te muestra cómo se llama el servicio de CRON EN TU DISTRO
+#      (cron.service en Debian/Ubuntu, cronie.service en Arch, crond.service en Fedora).
 #
 # La gracia de Ansible: el MISMO playbook arma el laboratorio en Ubuntu, Arch o
 # Fedora sin que cambies una línea. Y es IDEMPOTENTE: corrélo mil veces, siempre
@@ -27,23 +29,36 @@
 #   ansible-playbook armar_reto.yml -l local --check --diff
 # Aplicar de verdad:
 #   ansible-playbook armar_reto.yml -l local
-#   (si al instalar los paquetes te pide contraseña de sudo, agregá  -K)
+#   (si al instalar shellcheck te pide contraseña de sudo, agregá  -K)
 
-- name: Armar la estación de auditoría (Debian/Ubuntu + Arch + Fedora)
+- name: Armar el postmortem de la noche fea (Debian/Ubuntu + Arch + Fedora)
   hosts: local
   become: false
 
   vars:
-    # true = instala shellcheck y gawk (necesita sudo; agregá -K si te pide clave).
-    # Poné false si no querés usar sudo: el reto se resuelve igual.
-    instalar_herramientas: true
+    # true = instala shellcheck (necesita sudo; agregá -K si te pide contraseña).
+    # Poné false si no querés usar sudo: el reto se resuelve igual sin shellcheck.
+    instalar_shellcheck: true
     area: "{{ playbook_dir }}/../datos/reto"
-    # El MISMO programa, distinto nombre de paquete según la familia.
-    # En Fedora/RHEL el paquete se llama 'ShellCheck', con mayúsculas.
-    pkg_shellcheck: "{{ 'ShellCheck' if ansible_os_family == 'RedHat' else 'shellcheck' }}"
-    gestor: >-
-      {{ 'apt' if ansible_os_family == 'Debian'
-         else ('pacman' if ansible_os_family == 'Archlinux' else 'dnf') }}
+    # LA TRAMPA DE LA CLASE: el MISMO servicio, distinto nombre según la familia.
+    unit_cron: >-
+      {{ 'cron.service' if ansible_os_family == 'Debian'
+         else ('cronie.service' if ansible_os_family == 'Archlinux' else 'crond.service') }}
+    # Y el mismo paquete, distinta forma de escribirlo (Fedora usa CamelCase).
+    paquete_shellcheck: "{{ 'ShellCheck' if ansible_os_family == 'RedHat' else 'shellcheck' }}"
+    # El material del incidente. Ojo con "app viejo.log": tiene un ESPACIO a propósito.
+    logs_incidente:
+      - api01.log
+      - api02.log
+      - app viejo.log
+      - batch01.log
+      - cache01.log
+      - dbnode1.log
+      - web01.log
+      - web02.log
+      - worker01.log
+      - worker02.log
+      - notas.txt
 
   pre_tasks:
     # Si tu distro no es de estas 3 familias, el playbook se detiene ACÁ y te lo
@@ -55,58 +70,57 @@
         fail_msg: >-
           Distro no soportada: {{ ansible_distribution }}
           (familia {{ ansible_os_family }}). Este material corre en Debian/Ubuntu
-          (gestor apt), Arch (gestor pacman) y Fedora/RHEL (gestor dnf). Bash es
-          el mismo en las tres: solo cambia cómo se instala un paquete.
+          (gestor apt), Arch (gestor pacman) y Fedora/RHEL (gestor dnf). Bash, logger
+          y la sintaxis del crontab son idénticos en las tres.
         success_msg: >-
           Distro soportada: {{ ansible_distribution }} ({{ ansible_os_family }}).
         quiet: true
 
     # UN solo módulo, TRES gestores: 'package' elige apt / pacman / dnf por vos.
     # block/rescue: si falla (sin sudo, sin red, repos rotos) NO te tira el
-    # laboratorio abajo — te avisa y seguís.
-    - name: Instalar las herramientas de forma tolerante a fallos
-      when: instalar_herramientas | bool
+    # laboratorio abajo — te avisa y seguís, que el reto no necesita shellcheck.
+    - name: Instalar shellcheck de forma tolerante a fallos
+      when: instalar_shellcheck | bool
       block:
-        - name: Instalar shellcheck y gawk (el mismo módulo usa apt, pacman o dnf)
+        - name: Instalar shellcheck (el mismo módulo usa apt, pacman o dnf según tu distro)
           ansible.builtin.package:
-            name:
-              - "{{ pkg_shellcheck }}"
-              - gawk
+            name: "{{ paquete_shellcheck }}"
             state: present
           become: true
       rescue:
         - name: Avisar que no se pudo instalar (y seguir igual)
           ansible.builtin.debug:
             msg: >-
-              No pude instalar las herramientas ({{ ansible_os_family }}, gestor
-              {{ gestor }}). Seguimos igual: el reto se resuelve con grep y las
-              pruebas de archivo de Bash, que ya vienen en cualquier distro.
-              Si querés shellcheck, instalalo a mano y volvé a correr el playbook.
+              No pude instalar {{ paquete_shellcheck }} ({{ ansible_os_family }}).
+              Seguimos igual: el reto se resuelve con bash, grep, sort y uniq, que ya
+              vienen en cualquier distro. shellcheck es un lujo para revisar tu script:
+              si lo querés, instalalo a mano y volvé a correr.
 
   tasks:
-    - name: Crear el área de trabajo de la auditoría
+    - name: Crear el área de trabajo del postmortem
       ansible.builtin.file:
-        path: "{{ area }}"
+        path: "{{ item }}"
         state: directory
         mode: '0755'
+      loop:
+        - "{{ area }}"
+        - "{{ area }}/logs"
+        - "{{ area }}/logs/viejos"
 
-    - name: Copiar el log de la app que te dejaron
+    - name: Copiar el material del incidente (10 logs + el ruido)
       ansible.builtin.copy:
-        src: "{{ playbook_dir }}/reto/app_reto.log"
-        dest: "{{ area }}/app_reto.log"
+        src: "{{ playbook_dir }}/reto/logs/{{ item }}"
+        dest: "{{ area }}/logs/{{ item }}"
         mode: '0644'
+      loop: "{{ logs_incidente }}"
 
-    - name: Copiar la carpeta de scripts viejos del compañero que se fue
+    # Este NO es parte del incidente: es el material del año pasado. Está acá a
+    # propósito, para que te des cuenta de que 'grep -r' se lo come.
+    - name: Copiar el material VIEJO (el del año pasado, que no cuenta)
       ansible.builtin.copy:
-        src: "{{ playbook_dir }}/reto/scripts_reto/"
-        dest: "{{ area }}/scripts_reto/"
+        src: "{{ playbook_dir }}/reto/logs/viejos/web02_2025.log"
+        dest: "{{ area }}/logs/viejos/web02_2025.log"
         mode: '0644'
-
-    - name: Dejar una copia de la plantilla de script al alcance de la mano
-      ansible.builtin.copy:
-        src: "{{ playbook_dir }}/../docs/plantilla_script.sh"
-        dest: "{{ area }}/plantilla_script.sh"
-        mode: '0755'
 
     - name: Generar TU misión personalizada (módulo template + facts)
       ansible.builtin.template:
@@ -122,35 +136,42 @@
 
   post_tasks:
     # "Verificar antes de confiar": mostramos cuánto material quedó listo.
-    # changed_when: false -> es una consulta, no cambia nada: así sigue siendo idempotente.
-    - name: Contar las líneas del log del incidente
-      ansible.builtin.command:
-        cmd: "wc -l {{ area }}/app_reto.log"
+    # changed_when: false -> leer NO es cambiar (idempotencia).
+    - name: Contar los archivos del incidente
+      ansible.builtin.find:
+        paths: "{{ area }}/logs"
+        patterns: '*.log'
+        recurse: false
+      register: hallados
       changed_when: false
-      register: conteo
 
-    - name: Ver si shellcheck quedó disponible EN TU DISTRO
+    # Solo LEE el estado de cron en tu máquina. No arranca ni habilita nada.
+    - name: Ver cómo se llama (y cómo está) el servicio de CRON EN TU DISTRO
       ansible.builtin.command:
-        cmd: "shellcheck --version"
+        cmd: "systemctl is-enabled {{ unit_cron }}"
       changed_when: false
       failed_when: false
-      register: sc_estado
+      register: cron_estado
 
     - name: Mostrar la misión
       ansible.builtin.debug:
         msg:
           - "==============================================================="
-          - "  Estación lista en:  datos/reto/     (abrí MISION.txt)"
-          - "  {{ conteo.stdout | trim }}"
-          - "  shellcheck: {{ 'instalado' if sc_estado.rc == 0 else 'NO disponible (instalalo con ' + gestor + ')' }}"
+          - "  Material listo en:  datos/reto/logs/     (abrí MISION.txt)"
+          - "  Archivos *.log en la carpeta (sin contar viejos/): {{ hallados.matched }}"
+          - "  En {{ ansible_distribution }} el cron se llama '{{ unit_cron }}'
+             y está: {{ cron_estado.stdout | default('sin dato') }}"
           - "---------------------------------------------------------------"
-          - "  Escribí TU script auditar.sh (partí de plantilla_script.sh) y"
-          - "  armá la bandera con este formato EXACTO:"
+          - "  Sos el SRE de guardia. ESCRIBÍ UN SCRIPT (shebang + set -euo"
+          - "  pipefail + argumento validado + bucle + función) que conteste"
+          - "  estas 3 preguntas, y armá la bandera con este formato EXACTO:"
           - "      BANDERA{<R1>-<R2>-<R3>}"
           - ""
-          - "  R1) ¿Cuántas líneas son de NIVEL ERROR? (ojo: grep -c ERROR miente)"
-          - "  R2) ¿Qué SERVICIO acumula más líneas de nivel ERROR?"
-          - "  R3) ¿Cuántos .sh de scripts_reto/ NO tienen shebang en la línea 1?"
+          - "  R1) Total de líneas con el nivel [ERROR] exacto, sumando TODOS"
+          - "      los *.log de datos/reto/logs/ (sin entrar a viejos/)."
+          - "  R2) ¿Qué archivo juntó MÁS [ERROR]? (sin la extensión .log)"
+          - "  R3) Dentro de ESE archivo, ¿cuántas veces aparece el code=EXXX"
+          - "      más repetido?"
           - ""
           - "  Verificá tu bandera con Ansible (el repo NO la guarda en texto"
           - "  plano, solo su huella SHA-256):"

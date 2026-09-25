@@ -1,129 +1,153 @@
-# 🏁 El reto de la bandera — Clase 12 (Shell scripting I)
+# Playbooks de Ansible — AdminLinux Clase 12 (shell scripting y el reto de la bandera)
 
-> **Ansible arma el entorno · vos escribís el script · la bandera es la recompensa.**
-> Este reto **no se entrega por Pull Request**: cuando la tengas verificada, **se la
-> decís al profe**.
+Un **escenario práctico de SRE**: desplegás un playbook de Ansible que te deja el material
+del incidente (los logs de **todos** los hosts de una noche fea) y después, con lo que
+viste de **shell scripting**, **escribís el script** que saca los tres números del
+postmortem. Con esas 3 respuestas armás una **bandera** y la verificás con otro playbook.
 
-## Qué es esto
+> 🐧 Con una sola VM alcanza: todo corre contra `localhost` (grupo `[local]`).
+> No es hacking: es la guardia normal de un SRE. Son demasiados archivos para mirarlos a
+> mano — **para eso escribimos un script**.
 
-Entrás a un equipo nuevo. El compañero que se fue dejó una app con su log y una carpeta
-de scripts viejos. Te piden un informe — y la regla de la casa es que **no se hace a
-mano**: se hace con un **script**, para que mañana lo corra cualquiera.
-
-Con un solo comando desplegás tu estación de trabajo (multi-distro), leés tu misión
-personalizada, **escribís tu `auditar.sh`** y sacás 3 respuestas. Con esas 3 armás la
-bandera y la verificás.
-
-## 0. ¿Tenés todo?
+## Paso 0 — ¿Tenés todo? (te dice qué falta y cómo instalarlo)
 
 ```bash
+cd playbooks
 bash comprobar_requisitos.sh
 ```
 
-Te detecta la distro (`apt` / `pacman` / `dnf`) y, si falta algo, te dice el comando
-exacto para instalarlo. **No instala nada por vos.**
+Detecta tu distro y, si falta algo (Ansible, Python, shellcheck), te da el comando exacto
+para **apt**, **pacman** o **dnf**. De paso te dice cómo se llama el servicio de **cron en
+tu distro** (`cron` vs `cronie` vs `crond`), que es la trampa multi-distro de esta clase.
 
-## 1. Desplegá el entorno
+## Paso 1 — Desplegá el reto
 
 ```bash
-# Simular primero (no toca nada) — RECOMENDADO la 1ª vez
+# Simular primero (no toca nada, buena costumbre):
 ansible-playbook armar_reto.yml -l local --check --diff
 
-# Aplicar de verdad (si te pide contraseña de sudo, agregá -K)
+# Aplicar de verdad (deja datos/reto/ listo):
 ansible-playbook armar_reto.yml -l local
+#   ↳ si al instalar shellcheck te pide contraseña de sudo, agregá  -K
 ```
 
-O el atajo: `bash correr.sh`.
+Atajo que hace el preflight + el armado:
 
-Corrélo **dos veces**: la 2ª tiene que dar `changed=0`. Eso es **idempotencia**, y es la
-diferencia entre un script que "hace cosas" y uno que **garantiza un estado**.
+```bash
+bash correr.sh
+```
 
-El playbook:
-
-| Paso | Módulo | Qué hace |
-|---|---|---|
-| 1 | `assert` | comprueba que tu distro esté soportada (Debian / Arch / RedHat) |
-| 2 | `package` (en `block`/`rescue`) | instala `shellcheck` y `gawk` con **tu** gestor. Si falla, **avisa y sigue** |
-| 3 | `file` | crea el área de trabajo `datos/reto/` |
-| 4 | `copy` | deja el log, los scripts viejos y la plantilla |
-| 5 | `template` | genera **tu** `MISION.txt` con los datos de **tu** máquina |
-| 6 | `copy` (`mode: 0600`) | deja la nota del equipo **solo legible por vos** |
-| 7 | `command` (`changed_when: false`) | te muestra cuánto material quedó listo |
-
-> 🐧 **El mismo playbook corre en Ubuntu, Arch y Fedora** sin cambiar una línea.
-> El módulo `package` elige `apt`, `pacman` o `dnf` según `ansible_os_family`, y el
-> paquete de shellcheck se llama `ShellCheck` (con mayúsculas) solo en Fedora/RHEL.
-
-## 2. Leé tu misión
+Esto deja tu misión en `../datos/reto/MISION.txt`. Leela:
 
 ```bash
 cat ../datos/reto/MISION.txt
 ```
 
-## 3. Escribí tu script
+> 🔒 El playbook **no toca ningún servicio de tu máquina**. Lo único que hace con
+> `systemctl` es un `is-enabled` de **lectura**, para mostrarte cómo se llama el cron en tu
+> distro. No arranca, no habilita, no para nada. Y **no instala ningún cron job.**
 
-Partí de la plantilla:
+## Paso 2 — Escribí el script que resuelve el postmortem
+
+Te dejaron en `datos/reto/logs/`:
+
+- `*.log` — el material del incidente (varios hosts).
+- `viejos/` — material del **año pasado**: **no** es parte de este incidente.
+- `notas.txt` — apuntes sueltos (**no** es un `.log`).
+- `../nota_equipo.txt` — la nota del compañero (quedó en `0600`).
+
+El jefe de guardia quiere 3 datos:
+
+1. **R1** — total de líneas con el nivel `[ERROR]` **exacto**, sumando **todos** los
+   `*.log` de esa carpeta (sin entrar a `viejos/`).
+2. **R2** — qué archivo acumuló **más** `[ERROR]`, **sin** la extensión `.log`.
+3. **R3** — dentro de **ese** archivo, cuántas veces aparece el `code=EXXX` **más
+   repetido**.
+
+Armá la bandera con el formato exacto: `BANDERA{<R1>-<R2>-<R3>}`.
+
+Y el script tiene que cumplir el mínimo profesional de la clase: shebang +
+`set -euo pipefail`, carpeta **por argumento** y validada, recorrido con **glob**,
+**todas** las variables entrecomilladas, al menos **una función** con `local`, errores a
+`>&2`, **códigos de salida** distintos (0/1/2) y **`shellcheck` limpio**.
+
+> 💡 El script NO está acá a propósito: la idea es que lo escribas vos (el apunte y las
+> chuletas de `docs/` te dan todas las piezas). Lo que sí te decimos son las **4 trampas**,
+> porque son los errores clásicos:
+>
+> 1. Hay un archivo con un **espacio** en el nombre → `for f in $(ls)` te lo parte en dos.
+> 2. `viejos/` tiene material del año pasado → `grep -r` te ensucia todo. Y adentro hay una
+>    **bandera señuelo**: no sirve.
+> 3. `notas.txt` menciona `[ERROR]` pero **no** es un `.log`.
+> 4. Hay `[error]` en **minúscula** (ruido, no cuenta) y `[INFO]` que nombran la palabra
+>    ERROR (tampoco).
+>
+> Y la quinta, que no es trampa sino bug propio: si tu total da **0**, casi seguro el
+> acumulador quedó adentro de un `cmd | while` (ver `docs/auto_estudio.md`).
+>
+> Si le pedís ayuda a una IA, **entendé el script** antes de correrlo.
+
+## Paso 3 — Verificá tu bandera con Ansible
 
 ```bash
-cd ../datos/reto
-cp plantilla_script.sh auditar.sh
-chmod +x auditar.sh
+ansible-playbook comprobar_bandera.yml -e "bandera=BANDERA{...}"
 ```
 
-Tiene que tener: shebang `#!/usr/bin/env bash`, `set -euo pipefail`, **validación** del
-argumento y del archivo (`-f`, `-r`), **todas** las variables entre comillas, errores a
-`stderr` (`>&2`) y `exit 0/1/2`. Y tiene que pasar `shellcheck auditar.sh` **limpio**.
+- ✅ correcta → 🏁 trofeo.
+- ❌ incorrecta → volvé a mirar cada número (y releé las 4 trampas).
 
-⚠️ **Sin bucles ni funciones** — eso es la Clase 13. Se resuelve con lo de hoy.
+El repo **no guarda la bandera en texto plano**: solo su huella **SHA-256** en
+`secretos/bandera.sha256`. Es la misma idea con la que se guardan las contraseñas
+(nunca el secreto, solo su hash). **Security by design.**
 
-## 4. Las 3 respuestas
+> 🗣️ Cuando te dé ✅, **se la decís al profe**. No hace falta Pull Request.
 
-- **R1** — cuántas líneas del log son de **nivel ERROR**.
-  ⚠️ `grep -c ERROR` **te miente**: el nivel es el **segundo campo**.
-- **R2** — qué **servicio** (tercer campo) acumula más líneas de nivel ERROR.
-- **R3** — cuántos `.sh` de `scripts_reto/` **no** tienen shebang en la línea 1.
+## Probá la idempotencia (lo más importante de Ansible)
 
-## 5. Verificá la bandera
+Corré `armar_reto.yml` **dos veces seguidas**: la 1ª hace cambios (`changed`), la 2ª deja
+todo en `ok` (`changed=0`, ya estaba como debía). Ese es el corazón de IaC: describís el
+**estado deseado**, no pasos sueltos. Por eso las tareas de lectura llevan
+`changed_when: false`: leer no es cambiar.
 
-```bash
-ansible-playbook comprobar_bandera.yml -e "bandera=BANDERA{<R1>-<R2>-<R3>}"
-```
+> 🔎 Guardate la idea: **tu script de hoy NO es idempotente** (si lo corrés dos veces,
+> hace todo dos veces). La **Clase 13** va justo por ahí.
 
-- ✅ **BANDERA CORRECTA** → trofeo.
-- ❌ incorrecta → el playbook te dice **qué revisar** de cada respuesta.
+## 🔀 Multi-distro: el mismo playbook en 3 familias
 
-## 6. Entregá
+| | Debian / Ubuntu | Arch | Fedora / RHEL |
+|---|---|---|---|
+| Gestor | `apt` | `pacman` | `dnf` |
+| Paquete shellcheck | `shellcheck` | `shellcheck` | **`ShellCheck`** (CamelCase) |
+| Detección | `ansible_os_family == 'Debian'` | `'Archlinux'` | `'RedHat'` |
+| **Paquete de cron** | `cron` | `cronie` | `cronie` |
+| **Unit de cron** | **`cron.service`** | **`cronie.service`** | **`crond.service`** |
+| Log del demonio | `journalctl -u cron` | `journalctl -u cronie` | `journalctl -u crond` |
 
-**Decile la bandera al profe** (en clase o por el canal del curso). Listo. **No** hace
-falta subir nada al repo ni abrir un Pull Request.
+El playbook detecta la familia con `ansible_os_family` y el módulo genérico `package`
+elige el gestor por vos. La instalación va envuelta en **`block`/`rescue`**: si no hay
+sudo o no hay red, te avisa y **sigue** en vez de dejarte el laboratorio a medio armar.
 
----
-
-## 🔒 Security by design en este reto
-
-- El repo **no guarda la bandera en claro**: solo su **huella SHA-256** en
-  `secretos/bandera.sha256`. El playbook compara **hashes**. Es la misma idea con la que
-  se guardan las contraseñas de verdad (que además usan hashing lento con sal).
-- La nota del equipo se copia con `mode: '0600'` — **solo su dueño** la lee.
-- Adentro de `scripts_reto/` hay un script con un **token hardcodeado**. Es un
-  **antipatrón a propósito**: el valor es falso. Cuando lo veas, ya sabés por qué está mal.
-- Los usuarios e IPs del log son **ficticios** y de **rango privado**.
-
-## 🗂️ Mapa de la carpeta
+## Qué hay acá
 
 | Archivo | Qué es |
 |---|---|
-| `armar_reto.yml` | despliega tu estación (multi-distro, idempotente) |
-| `comprobar_bandera.yml` | verifica tu bandera **por hash** |
-| `comprobar_requisitos.sh` | chequea que tengas Ansible, Python, shellcheck, gawk |
-| `correr.sh` | atajo: requisitos + armar |
-| `ansible.cfg` | config local (usa `inventory.ini` sin pasarlo a mano) |
-| `inventory.ini` | qué máquinas administra Ansible (acá: `localhost`) |
-| `templates/mision.txt.j2` | la plantilla Jinja2 de tu `MISION.txt` |
-| `reto/app_reto.log` | el log de la app |
-| `reto/scripts_reto/` | los scripts viejos del compañero |
-| `reto/nota_equipo.txt` | la nota del equipo (se copia con `0600`) |
-| `secretos/bandera.sha256` | **solo el hash** de la bandera |
+| `armar_reto.yml` | Despliega el material del incidente + shellcheck + tu misión (tri-distro, idempotente). |
+| `comprobar_bandera.yml` | Verifica tu bandera por hash (sin exponer el secreto). |
+| `comprobar_requisitos.sh` | Preflight: detecta tu distro y te dice qué instalar. |
+| `correr.sh` | Atajo: preflight + arma el reto. |
+| `templates/mision.txt.j2` | Plantilla Jinja de la misión (se personaliza con tus facts). |
+| `reto/logs/*.log` | Los logs de la noche del incidente (uno por host). |
+| `reto/logs/viejos/` | Material del año pasado: **no** cuenta (y trae un señuelo). |
+| `reto/logs/notas.txt` | Apuntes sueltos que **no** son un `.log`. |
+| `reto/nota_equipo.txt` | Nota del equipo (se deja en 0600). |
+| `secretos/bandera.sha256` | Solo la **huella** de la bandera (no el secreto). |
+| `inventory.ini` / `ansible.cfg` | Qué máquinas administra Ansible + config local. |
 
-> 🤖 Si le pedís el script a la IA: **leelo entero**, pasalo por `shellcheck`, y si tiene
-> un `rm` cambialo por `echo rm` para ver qué **habría** borrado.
+## ⚠️ Seguridad
+
+- Ningún playbook usa `chmod 777`, contraseñas en texto plano ni secretos versionados.
+- La nota con valor queda en **0600** (menor privilegio) por diseño.
+- La bandera se guarda como **hash**, no en claro.
+- Nada se arranca, se habilita ni se agenda en tu máquina: el único `systemctl` es de
+  **lectura** y **no se instala ningún cron job**.
+- Simulá (`--check --diff`) antes de aplicar algo que no conozcas.
